@@ -5,16 +5,16 @@ import 'app_radii.dart';
 import 'app_shadows.dart';
 import 'app_text_styles.dart';
 
-/// The app's full Material theme, built from the zbang design tokens
-/// (AppColors/AppRadii/AppTextStyles/AppShadows - themselves ported 1:1
-/// from the web app's style.css). Material 3 provides the mechanics
-/// (ColorScheme, component theme slots); every value inside is this app's
-/// own flat, matte, dark identity, not Material's defaults.
+/// The app's full Material theme, built entirely from the design tokens in
+/// this folder (AppColors/AppRadii/AppTextStyles/AppShadows). Material 3
+/// supplies the mechanics - ColorScheme, component theme slots - while every
+/// value inside is the app's own light, high-contrast game identity rather
+/// than a Material default.
 class AppTheme {
   AppTheme._();
 
-  static ThemeData get dark {
-    final colorScheme = const ColorScheme.dark(
+  static ThemeData get light {
+    const colorScheme = ColorScheme.light(
       surface: AppColors.panelLight,
       surfaceContainerHighest: AppColors.surface2,
       primary: AppColors.green,
@@ -25,12 +25,12 @@ class AppTheme {
       onPrimary: AppColors.textLight,
       onSecondary: AppColors.textLight,
       onError: AppColors.textLight,
-      outline: AppColors.surface3,
+      outline: AppColors.hairline,
     );
 
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
+      brightness: Brightness.light,
       scaffoldBackgroundColor: AppColors.bgDeep,
       canvasColor: AppColors.bgDeep,
       colorScheme: colorScheme,
@@ -40,35 +40,41 @@ class AppTheme {
       textTheme: const TextTheme(
         displayLarge: AppTextStyles.title,
         headlineMedium: AppTextStyles.heading,
+        titleLarge: AppTextStyles.cardTitle,
         titleMedium: AppTextStyles.bodyEmphasis,
         bodyLarge: AppTextStyles.body,
         bodyMedium: AppTextStyles.bodySecondary,
         labelLarge: AppTextStyles.button,
+        labelSmall: AppTextStyles.badge,
       ),
 
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.bgDeep,
         foregroundColor: AppColors.textPrimary,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0,
         centerTitle: true,
         titleTextStyle: AppTextStyles.heading,
-        iconTheme: const IconThemeData(color: AppColors.textPrimary),
+        iconTheme: IconThemeData(color: AppColors.textPrimary),
       ),
 
       iconTheme: const IconThemeData(color: AppColors.textPrimary, size: 22),
 
       dividerTheme: const DividerThemeData(
-        color: AppColors.surface3,
+        color: AppColors.hairline,
         thickness: 1,
         space: 1,
       ),
 
       cardTheme: CardThemeData(
         color: AppColors.panelLight,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadii.card),
+          side: const BorderSide(color: AppColors.hairline),
         ),
       ),
 
@@ -76,7 +82,8 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.green,
           foregroundColor: AppColors.textLight,
-          disabledBackgroundColor: AppColors.green.withValues(alpha: 0.35),
+          disabledBackgroundColor: AppColors.surface3,
+          disabledForegroundColor: AppColors.textSecondary,
           textStyle: AppTextStyles.button,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           shape: RoundedRectangleBorder(
@@ -99,7 +106,7 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.textPrimary,
-          side: const BorderSide(color: AppColors.surface3),
+          side: const BorderSide(color: AppColors.hairline),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadii.btn),
@@ -125,11 +132,11 @@ class AppTheme {
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadii.sm),
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: AppColors.hairline),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadii.sm),
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: AppColors.hairline),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadii.sm),
@@ -143,6 +150,7 @@ class AppTheme {
 
       dialogTheme: DialogThemeData(
         backgroundColor: AppColors.panelLight,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         titleTextStyle: AppTextStyles.heading,
         contentTextStyle: AppTextStyles.body,
@@ -153,6 +161,7 @@ class AppTheme {
 
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: AppColors.panelLight,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadii.card)),
@@ -160,8 +169,8 @@ class AppTheme {
       ),
 
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: AppColors.surface2,
-        contentTextStyle: AppTextStyles.bodyEmphasis,
+        backgroundColor: AppColors.textPrimary,
+        contentTextStyle: AppTextStyles.bodyEmphasis.copyWith(color: AppColors.textLight),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadii.sm),
@@ -172,35 +181,40 @@ class AppTheme {
         backgroundColor: AppColors.surface2,
         labelStyle: AppTextStyles.bodyEmphasis,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(999),
-        ),
+        shape: const StadiumBorder(side: BorderSide(color: AppColors.hairline)),
         side: BorderSide.none,
       ),
 
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: AppColors.panelLight,
-        indicatorColor: AppColors.green.withValues(alpha: 0.24),
+        surfaceTintColor: Colors.transparent,
+        indicatorColor: AppColors.limeFill,
+        elevation: 0,
         labelTextStyle: WidgetStateProperty.all(AppTextStyles.bodySecondary),
         iconTheme: const WidgetStatePropertyAll(IconThemeData(color: AppColors.textPrimary)),
       ),
 
       progressIndicatorTheme: const ProgressIndicatorThemeData(
         color: AppColors.green,
-        linearTrackColor: AppColors.surface2,
+        linearTrackColor: AppColors.surface3,
       ),
     );
   }
 }
 
-/// Convenience helpers for the elevated "card" look used throughout the app
-/// (see AppShadows) that plain CardTheme can't express on its own.
-extension AppCardDecoration on BuildContext {
-  BoxDecoration cardDecoration({List<BoxShadow>? shadow, double radius = AppRadii.card}) {
-    return BoxDecoration(
-      color: AppColors.panelLight,
-      borderRadius: BorderRadius.circular(radius),
-      boxShadow: shadow ?? AppShadows.sm,
-    );
-  }
+/// Shared decoration for the app's white card surface, which needs both a
+/// hairline (to separate white-on-near-white) and a soft lift - more than a
+/// plain CardTheme can express.
+BoxDecoration appCardDecoration({
+  Color color = AppColors.panelLight,
+  double radius = AppRadii.card,
+  List<BoxShadow>? shadow,
+  bool border = true,
+}) {
+  return BoxDecoration(
+    color: color,
+    borderRadius: BorderRadius.circular(radius),
+    border: border ? Border.all(color: AppColors.hairline) : null,
+    boxShadow: shadow ?? AppShadows.sm,
+  );
 }

@@ -24,6 +24,8 @@ class AppTextStyles {
     fontFamily: _display,
     fontWeight: FontWeight.w800,
     fontSize: 34,
+    height: 1.1,
+    letterSpacing: -0.5,
     color: AppColors.textPrimary,
   );
 
@@ -31,6 +33,27 @@ class AppTextStyles {
     fontFamily: _display,
     fontWeight: FontWeight.w700,
     fontSize: 22,
+    height: 1.2,
+    letterSpacing: -0.2,
+    color: AppColors.textPrimary,
+  );
+
+  /// Card titles in the mode grid - heavier than [heading] at a smaller size,
+  /// so a two-line card still reads as a headline.
+  static const TextStyle cardTitle = TextStyle(
+    fontFamily: _display,
+    fontWeight: FontWeight.w800,
+    fontSize: 17,
+    height: 1.15,
+    color: AppColors.textPrimary,
+  );
+
+  /// Small all-caps-feeling label for badges and chips.
+  static const TextStyle badge = TextStyle(
+    fontFamily: _display,
+    fontWeight: FontWeight.w700,
+    fontSize: 11,
+    height: 1.2,
     color: AppColors.textPrimary,
   );
 

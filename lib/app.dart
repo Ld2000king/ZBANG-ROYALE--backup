@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'screens/home_screen.dart';
+import 'screens/home_shell.dart';
 import 'theme/app_theme.dart';
 
 class ZbangRoyaleApp extends StatelessWidget {
@@ -12,7 +12,7 @@ class ZbangRoyaleApp extends StatelessWidget {
     return MaterialApp(
       title: 'זבאנג רויאל',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.dark,
+      theme: AppTheme.light,
       locale: const Locale('he'),
       supportedLocales: const [Locale('he')],
       localizationsDelegates: const [
@@ -26,7 +26,7 @@ class ZbangRoyaleApp extends StatelessWidget {
           child: child!,
         );
       },
-      home: const HomeScreen(),
+      home: const HomeShell(),
     );
   }
 }

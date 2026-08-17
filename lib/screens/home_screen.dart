@@ -4,167 +4,140 @@ import 'package:provider/provider.dart';
 import '../core/avatars_data.dart';
 import '../game/player_profile_controller.dart';
 import '../theme/app_colors.dart';
-import '../theme/app_radii.dart';
+import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
-import '../widgets/app_icon.dart';
-import '../widgets/aurora_background.dart';
-import '../widgets/avatar_circle.dart';
-import '../widgets/buttons/app_button.dart';
-import '../widgets/pressable_scale.dart';
-import 'mode_select_screen.dart';
+import '../widgets/mode_card.dart';
+import '../widgets/player_header_card.dart';
+import '../widgets/stat_chip.dart';
+import 'battle_difficulty_screen.dart';
+import 'home_shell.dart';
 import 'profile_screen.dart';
-import 'shop_screen.dart';
+import 'single_duration_screen.dart';
 
-class HomeScreen extends StatefulWidget {
+/// The Home tab inside [HomeShell]: currency chips, the player card, and the
+/// game-mode grid. Modes launch straight from here - there's no separate
+/// mode-picker step.
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
-  late final AnimationController _entrance;
-
-  @override
-  void initState() {
-    super.initState();
-    // A quiet "rise-in" on load, ported from the web app's home-screen-rise
-    // ambient animation - content settles in rather than just appearing.
-    _entrance = AnimationController(vsync: this, duration: const Duration(milliseconds: 500))
-      ..forward();
-  }
-
-  @override
-  void dispose() {
-    _entrance.dispose();
-    super.dispose();
+  void _openProfile(BuildContext context) {
+    // Profile is a sibling tab, not a pushed route - switch the shell to it.
+    // Falls back to a push if Home is ever shown outside the shell.
+    final shell = HomeShellScope.maybeOf(context);
+    if (shell != null) {
+      shell.goToTab(HomeTab.profile);
+      return;
+    }
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProfileScreen()));
   }
 
   @override
   Widget build(BuildContext context) {
     final profile = context.watch<PlayerProfileController>();
     final avatar = avatarById(profile.avatarId);
-    final curved = CurvedAnimation(parent: _entrance, curve: Curves.easeOutCubic);
 
-    return Scaffold(
-      backgroundColor: AppColors.bgDeep,
-      body: AuroraBackground(
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            child: FadeTransition(
-              opacity: curved,
-              child: SlideTransition(
-                position: Tween(begin: const Offset(0, 0.05), end: Offset.zero).animate(curved),
-                child: Column(
-                  children: [
-                    Text('זבאנג רויאל', textAlign: TextAlign.center, style: AppTextStyles.title),
-                    const SizedBox(height: 8),
-                    Text(
-                      'מצא מילים בעברית על הלוח',
-                      textAlign: TextAlign.center,
-                      style: AppTextStyles.bodySecondary,
-                    ),
-                    const SizedBox(height: 24),
-                    _StatsCard(profile: profile, avatar: avatar),
-                    const Spacer(),
-                    AppButton(
-                      label: 'משחק',
-                      color: AppButtonColor.green,
-                      iconName: 'play',
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const ModeSelectScreen()),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    AppButton(
-                      label: 'חנות',
-                      color: AppButtonColor.gold,
-                      iconName: 'shopBag',
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const ShopScreen()),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    AppButton(
-                      label: 'פרופיל',
-                      color: AppButtonColor.blue,
-                      iconName: 'profile',
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const ProfileScreen()),
-                        );
-                      },
-                    ),
-                    const Spacer(),
-                  ],
+    return SafeArea(
+      bottom: false,
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.xl,
+          AppSpacing.lg,
+          AppSpacing.xl,
+          AppSpacing.xxl,
+        ),
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              StatChip(iconName: 'coin', value: '${profile.coins}'),
+              StatChip(iconName: 'diamond', value: '${profile.diamonds}'),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xl),
+          Text('זבאנג רויאל', style: AppTextStyles.title),
+          const SizedBox(height: AppSpacing.xs),
+          Text('מצא מילים בעברית על הלוח', style: AppTextStyles.bodySecondary),
+          const SizedBox(height: AppSpacing.lg),
+          PlayerHeaderCard(
+            avatar: avatar,
+            bestScore: profile.bestSingleScore,
+            onTap: () => _openProfile(context),
+          ),
+          const SizedBox(height: AppSpacing.xl),
+          Text('מצבי משחק', style: AppTextStyles.heading.copyWith(fontSize: 18)),
+          const SizedBox(height: AppSpacing.md),
+          const _ModeGrid(),
+        ],
+      ),
+    );
+  }
+}
+
+class _ModeGrid extends StatelessWidget {
+  const _ModeGrid();
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Two columns on a phone; the cards keep a comfortable aspect ratio
+        // rather than a fixed height, so long Hebrew subtitles still fit.
+        const gap = AppSpacing.md;
+        final cardWidth = (constraints.maxWidth - gap) / 2;
+
+        Widget sized(Widget child) => SizedBox(width: cardWidth, child: child);
+
+        return Wrap(
+          spacing: gap,
+          runSpacing: gap,
+          children: [
+            sized(
+              ModeCard(
+                iconName: 'timer',
+                title: 'שחקן יחיד',
+                subtitle: 'מרוץ נגד השעון',
+                fill: AppColors.limeFill,
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const SingleDurationScreen()),
                 ),
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _StatsCard extends StatelessWidget {
-  const _StatsCard({required this.profile, required this.avatar});
-
-  final PlayerProfileController profile;
-  final AvatarInfo avatar;
-
-  @override
-  Widget build(BuildContext context) {
-    return PressableScale(
-      onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProfileScreen()));
-      },
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppColors.panelLight,
-          borderRadius: BorderRadius.circular(AppRadii.card),
-        ),
-        child: Row(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _StatLine(iconName: 'coin', value: '${profile.coins}'),
-                const SizedBox(height: 6),
-                _StatLine(iconName: 'diamond', value: '${profile.diamonds}'),
-              ],
+            sized(
+              ModeCard(
+                iconName: 'sword',
+                title: 'באטל רויאל',
+                subtitle: '5 סיבובים מול בוטים',
+                fill: AppColors.amberFill,
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const BattleDifficultyScreen()),
+                ),
+              ),
             ),
-            const Spacer(),
-            AvatarCircle(avatar: avatar, size: 52),
+            sized(
+              const ModeCard(
+                iconName: 'users',
+                title: 'מולטיפלייר',
+                subtitle: 'נגד חברים בזמן אמת',
+                fill: AppColors.violetFill,
+                badge: 'בקרוב',
+                badgeColor: AppColors.textSecondary,
+                enabled: false,
+              ),
+            ),
+            sized(
+              const ModeCard(
+                iconName: 'versus',
+                title: 'התאמה אקראית',
+                subtitle: 'קרב 1 על 1',
+                fill: AppColors.skyFill,
+                badge: 'בקרוב',
+                badgeColor: AppColors.textSecondary,
+                enabled: false,
+              ),
+            ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _StatLine extends StatelessWidget {
-  const _StatLine({required this.iconName, required this.value});
-
-  final String iconName;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(value, style: AppTextStyles.bodyEmphasis),
-        const SizedBox(width: 6),
-        AppIcon(iconName, size: 18),
-      ],
+        );
+      },
     );
   }
 }

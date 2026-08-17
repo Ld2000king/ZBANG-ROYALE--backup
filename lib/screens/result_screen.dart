@@ -9,7 +9,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import '../widgets/buttons/app_button.dart';
 import 'game_screen.dart';
-import 'home_screen.dart';
+import 'home_shell.dart';
 
 class ResultScreen extends StatefulWidget {
   const ResultScreen({
@@ -56,7 +56,7 @@ class _ResultScreenState extends State<ResultScreen> {
 
   void _goHome(BuildContext context) {
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const HomeScreen()),
+      MaterialPageRoute(builder: (_) => const HomeShell()),
       (route) => false,
     );
   }

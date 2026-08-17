@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import '../core/avatars_data.dart';
 import '../game/player_profile_controller.dart';
 import '../theme/app_colors.dart';
-import '../theme/app_radii.dart';
 import '../theme/app_text_styles.dart';
+import '../theme/app_theme.dart';
 import '../widgets/app_icon.dart';
 import '../widgets/avatar_circle.dart';
 import '../widgets/pressable_scale.dart';
@@ -28,16 +28,15 @@ class ProfileScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(20),
+          // Extra bottom room so the last row clears the shell's
+          // bottom nav bar instead of hiding behind it.
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
           children: [
             Center(child: AvatarCircle(avatar: currentAvatar, size: 88)),
             const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.panelLight,
-                borderRadius: BorderRadius.circular(AppRadii.card),
-              ),
+              decoration: appCardDecoration(),
               child: Column(
                 children: [
                   _StatRow(iconName: 'coin', label: 'מטבעות', value: '${profile.coins}'),
@@ -45,7 +44,7 @@ class ProfileScreen extends StatelessWidget {
                   _StatRow(iconName: 'diamond', label: 'יהלומים', value: '${profile.diamonds}'),
                   const SizedBox(height: 10),
                   _StatRow(
-                    iconName: 'hint',
+                    iconName: 'trophy',
                     label: 'שיא שחקן יחיד',
                     value: '${profile.bestSingleScore}',
                   ),
