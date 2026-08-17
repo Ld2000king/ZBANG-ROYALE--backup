@@ -5,6 +5,8 @@ import '../core/constants.dart';
 import '../game/game_controller.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_radii.dart';
+import '../theme/app_shadows.dart';
+import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
 import '../widgets/app_icon.dart';
 import '../widgets/feedback/toast_banner.dart';
@@ -69,99 +71,219 @@ class _GameScreenState extends State<GameScreen> {
         child: Consumer<GameController>(
           builder: (context, controller, _) {
             return Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(AppSpacing.xl),
               child: Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TimerDisplay(secondsLeft: controller.timeLeft),
-                      PressableScale(
-                        onTap: controller.togglePause,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: AppIcon(
-                            controller.isPaused ? 'play' : 'pause',
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                      ),
-                      ScoreDisplay(score: controller.score),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    height: 28,
-                    child: Center(
-                      child: Text(
-                        controller.currentWord,
-                        style: AppTextStyles.heading,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
+                  _StatusCard(controller: controller),
+                  const SizedBox(height: AppSpacing.md),
+                  _CurrentWordPill(word: controller.currentWord),
+                  const SizedBox(height: AppSpacing.sm),
                   Align(
                     alignment: Alignment.topCenter,
                     child: ToastBanner(controller: controller),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.sm),
                   Expanded(
                     flex: 5,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        AspectRatio(
-                          aspectRatio: 1,
-                          child: LetterGrid(controller: controller),
-                        ),
-                        if (controller.isPaused)
-                          Container(
-                            decoration: BoxDecoration(
-                              color: AppColors.bgDeep.withValues(alpha: 0.85),
-                              borderRadius: BorderRadius.circular(AppRadii.card),
-                            ),
-                            child: Center(
-                              child: Text('מושהה', style: AppTextStyles.heading),
-                            ),
-                          ),
-                      ],
-                    ),
+                    child: _BoardCard(controller: controller),
                   ),
-                  const SizedBox(height: 12),
-                  PowerUpBar(
-                    items: [
-                      PowerUpSpec(itemKey: 'hint', onUse: controller.useHint),
-                      PowerUpSpec(
-                        itemKey: 'shuffle',
-                        onUse: () {
-                          controller.useShuffle();
-                          return true;
-                        },
-                      ),
-                      PowerUpSpec(
-                        itemKey: 'freeze',
-                        onUse: () {
-                          controller.useFreeze();
-                          return true;
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.lg),
+                  _PowerUpsCard(controller: controller),
+                  const SizedBox(height: AppSpacing.lg),
                   Expanded(
                     flex: 2,
-                    child: SingleChildScrollView(
-                      child: FoundWordsPanel(
-                        foundWords: controller.foundWords.toList(),
-                        pointsFor: controller.pointsFor,
-                      ),
-                    ),
+                    child: _FoundWordsCard(controller: controller),
                   ),
                 ],
               ),
             );
           },
         ),
+      ),
+    );
+  }
+}
+
+/// Timer / pause / score, grouped into one elevated status card instead of
+/// three elements floating loose on the background.
+class _StatusCard extends StatelessWidget {
+  const _StatusCard({required this.controller});
+
+  final GameController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl, vertical: AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.panelLight,
+        borderRadius: BorderRadius.circular(AppRadii.card),
+        boxShadow: AppShadows.sm,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          TimerDisplay(secondsLeft: controller.timeLeft, frozen: controller.freezeLeft > 0),
+          PressableScale(
+            onTap: controller.togglePause,
+            child: Container(
+              padding: const EdgeInsets.all(AppSpacing.sm),
+              decoration: const BoxDecoration(
+                color: AppColors.surface2,
+                shape: BoxShape.circle,
+              ),
+              child: AppIcon(
+                controller.isPaused ? 'play' : 'pause',
+                color: AppColors.textPrimary,
+                size: 20,
+              ),
+            ),
+          ),
+          ScoreDisplay(score: controller.score),
+        ],
+      ),
+    );
+  }
+}
+
+/// The word currently being dragged out, as a pill above the board - only
+/// takes visual weight once there's actually something to show.
+class _CurrentWordPill extends StatelessWidget {
+  const _CurrentWordPill({required this.word});
+
+  final String word;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 36,
+      child: Center(
+        child: AnimatedOpacity(
+          opacity: word.isEmpty ? 0 : 1,
+          duration: const Duration(milliseconds: 120),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
+            decoration: BoxDecoration(
+              color: AppColors.surface2,
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: Text(word.isEmpty ? ' ' : word, style: AppTextStyles.heading),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The letter grid framed in its own elevated card, giving it the visual
+/// weight of being the screen's centerpiece rather than one element among
+/// equals.
+class _BoardCard extends StatelessWidget {
+  const _BoardCard({required this.controller});
+
+  final GameController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: AppColors.panelLight,
+        borderRadius: BorderRadius.circular(AppRadii.card),
+        boxShadow: AppShadows.md,
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          AspectRatio(
+            aspectRatio: 1,
+            child: LetterGrid(controller: controller),
+          ),
+          if (controller.isPaused)
+            Container(
+              decoration: BoxDecoration(
+                color: AppColors.bgDeep.withValues(alpha: 0.85),
+                borderRadius: BorderRadius.circular(AppRadii.card),
+              ),
+              child: Center(
+                child: Text('מושהה', style: AppTextStyles.heading),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PowerUpsCard extends StatelessWidget {
+  const _PowerUpsCard({required this.controller});
+
+  final GameController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.panelLight,
+        borderRadius: BorderRadius.circular(AppRadii.card),
+        boxShadow: AppShadows.sm,
+      ),
+      child: PowerUpBar(
+        items: [
+          PowerUpSpec(itemKey: 'hint', onUse: controller.useHint),
+          PowerUpSpec(
+            itemKey: 'shuffle',
+            onUse: () {
+              controller.useShuffle();
+              return true;
+            },
+          ),
+          PowerUpSpec(
+            itemKey: 'freeze',
+            onUse: () {
+              controller.useFreeze();
+              return true;
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FoundWordsCard extends StatelessWidget {
+  const _FoundWordsCard({required this.controller});
+
+  final GameController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: AppColors.panelLight,
+        borderRadius: BorderRadius.circular(AppRadii.card),
+        boxShadow: AppShadows.sm,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'מילים שנמצאו (${controller.foundWords.length})',
+            style: AppTextStyles.bodySecondary,
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Expanded(
+            child: SingleChildScrollView(
+              child: FoundWordsPanel(
+                foundWords: controller.foundWords.toList(),
+                pointsFor: controller.pointsFor,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
