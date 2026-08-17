@@ -27,9 +27,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('זבאנג רויאל'), findsOneWidget);
-    expect(find.text('שחק'), findsOneWidget);
+    expect(find.text('משחק'), findsOneWidget);
 
-    await tester.tap(find.text('שחק'));
+    await tester.tap(find.text('משחק'));
     await tester.pumpAndSettle();
 
     expect(find.text('שחקן יחיד'), findsOneWidget);

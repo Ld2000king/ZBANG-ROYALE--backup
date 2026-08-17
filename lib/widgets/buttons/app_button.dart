@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_radii.dart';
 import '../../theme/app_text_styles.dart';
+import '../app_icon.dart';
 import '../pressable_scale.dart';
 
 enum AppButtonColor { green, gold, blue, orange, purple, red }
@@ -27,12 +28,18 @@ class AppButton extends StatelessWidget {
     required this.onPressed,
     this.color = AppButtonColor.green,
     this.enabled = true,
+    this.iconName,
   });
 
   final String label;
   final VoidCallback? onPressed;
   final AppButtonColor color;
   final bool enabled;
+
+  /// Optional AppIcon name shown beside the label - in reading order (the
+  /// app is RTL throughout, so this renders on the right, before the text,
+  /// matching the web app's play/shop/profile buttons).
+  final String? iconName;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +62,16 @@ class AppButton extends StatelessWidget {
             ),
             elevation: 0,
           ),
-          child: Text(label, style: AppTextStyles.button),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (iconName != null) ...[
+                AppIcon(iconName!, size: 20, color: AppColors.textLight),
+                const SizedBox(width: 8),
+              ],
+              Text(label, style: AppTextStyles.button),
+            ],
+          ),
         ),
       ),
     );
