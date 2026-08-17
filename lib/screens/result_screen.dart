@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../core/constants.dart';
-import '../data/best_score_store.dart';
 import '../data/dictionary/dictionary_repository.dart';
 import '../game/game_controller.dart';
+import '../game/player_profile_controller.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import '../widgets/buttons/app_button.dart';
@@ -28,15 +28,16 @@ class ResultScreen extends StatefulWidget {
 }
 
 class _ResultScreenState extends State<ResultScreen> {
-  final _bestScoreStore = BestScoreStore();
-  bool? _isNewBest;
+  bool _isNewBest = false;
+  int _coinsEarned = 0;
 
   @override
   void initState() {
     super.initState();
-    _bestScoreStore.submit(widget.score).then((isNewBest) {
-      if (mounted) setState(() => _isNewBest = isNewBest);
-    });
+    final profile = context.read<PlayerProfileController>();
+    _coinsEarned = widget.score ~/ 10;
+    _isNewBest = profile.submitSingleScore(widget.score);
+    profile.addCoins(_coinsEarned);
   }
 
   void _playAgain(BuildContext context) {
@@ -62,8 +63,6 @@ class _ResultScreenState extends State<ResultScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final coins = widget.score ~/ 10;
-
     return Scaffold(
       backgroundColor: AppColors.bgDeep,
       body: SafeArea(
@@ -76,12 +75,12 @@ class _ResultScreenState extends State<ResultScreen> {
               const SizedBox(height: 24),
               Text('${widget.score}', style: AppTextStyles.title),
               Text('ניקוד', style: AppTextStyles.bodySecondary),
-              if (_isNewBest == true) ...[
+              if (_isNewBest) ...[
                 const SizedBox(height: 8),
                 Text('שיא חדש!', style: AppTextStyles.bodyEmphasis.copyWith(color: AppColors.gold)),
               ],
               const SizedBox(height: 24),
-              Text('${widget.wordsFound} מילים נמצאו · $coins מטבעות', style: AppTextStyles.body),
+              Text('${widget.wordsFound} מילים נמצאו · $_coinsEarned מטבעות', style: AppTextStyles.body),
               const SizedBox(height: 48),
               AppButton(
                 label: 'שחק שוב',

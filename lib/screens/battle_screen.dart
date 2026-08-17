@@ -8,6 +8,7 @@ import '../theme/app_radii.dart';
 import '../theme/app_text_styles.dart';
 import '../widgets/feedback/toast_banner.dart';
 import '../widgets/hud/player_status_row.dart';
+import '../widgets/hud/power_up_bar.dart';
 import '../widgets/hud/timer_display.dart';
 import '../widgets/letter_grid.dart';
 import 'battle_result_screen.dart';
@@ -129,6 +130,40 @@ class _BattleScreenState extends State<BattleScreen> {
                           ),
                       ],
                     ),
+                  ),
+                  const SizedBox(height: 12),
+                  PowerUpBar(
+                    items: [
+                      PowerUpSpec(
+                        itemKey: 'hint',
+                        icon: Icons.lightbulb_outline,
+                        onUse: controller.useHint,
+                      ),
+                      PowerUpSpec(
+                        itemKey: 'shuffle',
+                        icon: Icons.shuffle,
+                        onUse: () {
+                          controller.useShuffle();
+                          return true;
+                        },
+                      ),
+                      PowerUpSpec(
+                        itemKey: 'freezeOpponents',
+                        icon: Icons.ac_unit,
+                        onUse: () {
+                          controller.useFreezeOpponents();
+                          return true;
+                        },
+                      ),
+                      PowerUpSpec(
+                        itemKey: 'tornado',
+                        icon: Icons.storm,
+                        onUse: () {
+                          controller.useTornado();
+                          return true;
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),

@@ -8,6 +8,7 @@ import '../theme/app_radii.dart';
 import '../theme/app_text_styles.dart';
 import '../widgets/feedback/toast_banner.dart';
 import '../widgets/hud/found_words_panel.dart';
+import '../widgets/hud/power_up_bar.dart';
 import '../widgets/hud/score_display.dart';
 import '../widgets/hud/timer_display.dart';
 import '../widgets/letter_grid.dart';
@@ -121,7 +122,33 @@ class _GameScreenState extends State<GameScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
+                  PowerUpBar(
+                    items: [
+                      PowerUpSpec(
+                        itemKey: 'hint',
+                        icon: Icons.lightbulb_outline,
+                        onUse: controller.useHint,
+                      ),
+                      PowerUpSpec(
+                        itemKey: 'shuffle',
+                        icon: Icons.shuffle,
+                        onUse: () {
+                          controller.useShuffle();
+                          return true;
+                        },
+                      ),
+                      PowerUpSpec(
+                        itemKey: 'freeze',
+                        icon: Icons.ac_unit,
+                        onUse: () {
+                          controller.useFreeze();
+                          return true;
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
                   Expanded(
                     flex: 2,
                     child: SingleChildScrollView(

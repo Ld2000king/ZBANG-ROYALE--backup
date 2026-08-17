@@ -42,6 +42,7 @@ class GameController extends DraggableBoardController {
   int _totalDuration = 0;
   bool gameActive = false;
   bool isPaused = false;
+  int freezeLeft = 0;
 
   Timer? _timer;
 
@@ -60,6 +61,7 @@ class GameController extends DraggableBoardController {
     _totalDuration = seconds;
     gameActive = true;
     isPaused = false;
+    freezeLeft = 0;
     dragPath = [];
     message = null;
 
@@ -71,6 +73,11 @@ class GameController extends DraggableBoardController {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (isPaused) return;
+      if (freezeLeft > 0) {
+        freezeLeft--;
+        notifyListeners();
+        return;
+      }
       timeLeft--;
       if (timeLeft <= 0) {
         timeLeft = 0;
@@ -130,6 +137,46 @@ class GameController extends DraggableBoardController {
     }
 
     dragPath = [];
+    notifyListeners();
+  }
+
+  /// Ported from useHint(): finds a still-unfound board word (reshuffling
+  /// first if the board is exhausted) and scores it as if the player had
+  /// dragged it. Returns false (no charge should be applied by the caller)
+  /// if no word could be found even after a reshuffle.
+  bool useHint() {
+    if (!gameActive || isPaused) return false;
+
+    var indices = _boardWordFinder.findWord(board: board, size: gridSize, foundWords: foundWords);
+    if (indices.isEmpty) {
+      _autoShuffleIfExhausted();
+      indices = _boardWordFinder.findWord(board: board, size: gridSize, foundWords: foundWords);
+      if (indices.isEmpty) return false;
+    }
+
+    final word = indices.map((i) => board[i]).join();
+    final points = pointsFor(word);
+    foundWords.add(word);
+    score += points;
+    setMessage('$word - כל הכבוד! +$points', GameMessageType.success);
+    notifyListeners();
+    return true;
+  }
+
+  /// Ported from useShuffle().
+  void useShuffle() {
+    if (!gameActive || isPaused) return;
+    board = List<String>.from(board)..shuffle();
+    setMessage('הלוח עורבב!', GameMessageType.success);
+    notifyListeners();
+  }
+
+  /// Ported from useFreeze(): the clock stops advancing for 5 more seconds
+  /// (stacks if used again while already frozen).
+  void useFreeze() {
+    if (!gameActive) return;
+    freezeLeft += 5;
+    setMessage('הזמן הוקפא ל-5 שניות!', GameMessageType.info);
     notifyListeners();
   }
 

@@ -1,18 +1,26 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:zbang_royale/app.dart';
 import 'package:zbang_royale/data/dictionary/dictionary_repository.dart';
+import 'package:zbang_royale/game/player_profile_controller.dart';
 
 void main() {
   testWidgets('Home screen shows the play CTA and opens mode select', (tester) async {
-    // Real asset I/O needs to run outside testWidgets' fake-async zone,
-    // otherwise the awaited Future never resolves and the test hangs.
+    SharedPreferences.setMockInitialValues({});
+
+    // Real asset/prefs I/O needs to run outside testWidgets' fake-async
+    // zone, otherwise the awaited Future never resolves and the test hangs.
     final dictionary = await tester.runAsync(() => DictionaryRepository.load());
+    final profile = await tester.runAsync(() => PlayerProfileController.load());
 
     await tester.pumpWidget(
-      Provider<DictionaryRepository>.value(
-        value: dictionary!,
+      MultiProvider(
+        providers: [
+          Provider<DictionaryRepository>.value(value: dictionary!),
+          ChangeNotifierProvider<PlayerProfileController>.value(value: profile!),
+        ],
         child: const ZbangRoyaleApp(),
       ),
     );
