@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_radii.dart';
 import '../theme/app_text_styles.dart';
+import 'battle_difficulty_screen.dart';
 import 'single_duration_screen.dart';
 
 class ModeSelectScreen extends StatelessWidget {
@@ -32,10 +33,15 @@ class ModeSelectScreen extends StatelessWidget {
               },
             ),
             const SizedBox(height: 12),
-            const _ModeTile(
+            _ModeTile(
               title: 'באטל רויאל',
               subtitle: 'חמישה סיבובים מול בוטים',
-              enabled: false,
+              enabled: true,
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const BattleDifficultyScreen()),
+                );
+              },
             ),
             const SizedBox(height: 12),
             const _ModeTile(

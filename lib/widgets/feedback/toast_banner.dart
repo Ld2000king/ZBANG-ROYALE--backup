@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../../game/game_controller.dart';
+import '../../game/draggable_board_controller.dart';
+import '../../game/game_message.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_radii.dart';
 import '../../theme/app_text_styles.dart';
@@ -19,7 +20,7 @@ const Map<GameMessageType, Color> _typeColors = {
 class ToastBanner extends StatefulWidget {
   const ToastBanner({super.key, required this.controller});
 
-  final GameController controller;
+  final DraggableBoardController controller;
 
   @override
   State<ToastBanner> createState() => _ToastBannerState();

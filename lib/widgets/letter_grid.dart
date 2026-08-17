@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../core/constants.dart';
-import '../game/game_controller.dart';
+import '../game/draggable_board_controller.dart';
 import 'letter_tile.dart';
 
 /// Drag-select gesture, ported from game.js's board drag handling.
@@ -20,7 +20,7 @@ import 'letter_tile.dart';
 class LetterGrid extends StatefulWidget {
   const LetterGrid({super.key, required this.controller});
 
-  final GameController controller;
+  final DraggableBoardController controller;
 
   @override
   State<LetterGrid> createState() => _LetterGridState();

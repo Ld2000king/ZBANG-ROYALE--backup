@@ -39,3 +39,44 @@ const int kPlantAttemptsPerWord = 20;
 /// Fraction of a tile's half-size the pointer must stay within for a drag
 /// to register that tile - ported from detectTileAt's `radius = ... * 0.42`.
 const double kTileHitRadiusFactor = 0.42;
+
+/// Battle Royale vs. bots, ported from battleState/BOT_NAMES/BOT_DIFFICULTY
+/// in game.js.
+const List<String> kBotNames = ['דני', 'מיכל', 'אורי', 'נועה', 'יוסי'];
+const int kBattleTotalRounds = 5;
+const int kBattleRoundSeconds = 60;
+const int kBotEliminationCoins = 25;
+const int kBattleVictoryCoins = 100;
+const int kBattleVictoryDiamonds = 5;
+
+enum BotDifficulty { easy, medium, hard }
+
+class BotDifficultyTier {
+  const BotDifficultyTier({
+    required this.displayName,
+    required this.minDelayMs,
+    required this.maxDelayMs,
+  });
+
+  final String displayName;
+  final int minDelayMs;
+  final int maxDelayMs;
+}
+
+const Map<BotDifficulty, BotDifficultyTier> kBotDifficultyTiers = {
+  BotDifficulty.easy: BotDifficultyTier(
+    displayName: 'זבאנג התחלתי',
+    minDelayMs: 7000,
+    maxDelayMs: 13000,
+  ),
+  BotDifficulty.medium: BotDifficultyTier(
+    displayName: 'זבאנג קלאסי',
+    minDelayMs: 4000,
+    maxDelayMs: 7500,
+  ),
+  BotDifficulty.hard: BotDifficultyTier(
+    displayName: 'זבאנג מלכותי',
+    minDelayMs: 2200,
+    maxDelayMs: 4500,
+  ),
+};

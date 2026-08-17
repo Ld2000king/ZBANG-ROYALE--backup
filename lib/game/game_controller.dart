@@ -1,27 +1,20 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
-
 import '../core/constants.dart';
 import '../data/dictionary/dictionary_repository.dart';
 import 'board_generator.dart';
 import 'board_word_finder.dart';
+import 'draggable_board_controller.dart';
+import 'game_message.dart';
 import 'word_validator.dart';
 
-enum GameMessageType { error, warning, info, success }
-
-class GameMessage {
-  const GameMessage(this.text, this.type);
-
-  final String text;
-  final GameMessageType type;
-}
+export 'game_message.dart';
 
 /// Owns one single-player session: board, timer, drag selection, scoring and
 /// found-words, and the auto-reshuffle-on-exhaustion rule. Ported from the
 /// single-player slice of game.js's currentGame state + startSinglePlayer/
 /// endDrag/startTimer/autoShuffleIfExhausted.
-class GameController extends ChangeNotifier {
+class GameController extends DraggableBoardController {
   GameController({
     required DictionaryRepository dictionary,
     BoardGenerator? boardGenerator,
@@ -35,8 +28,12 @@ class GameController extends ChangeNotifier {
   final WordValidator _wordValidator;
   final BoardWordFinder _boardWordFinder;
 
+  @override
   List<String> board = const [];
+  @override
   final int gridSize = kGridSize;
+  @override
+  List<int> dragPath = [];
 
   final Set<String> foundWords = <String>{};
   int score = 0;
@@ -46,14 +43,7 @@ class GameController extends ChangeNotifier {
   bool gameActive = false;
   bool isPaused = false;
 
-  List<int> dragPath = [];
-
-  GameMessage? message;
-  int messageNonce = 0;
-
   Timer? _timer;
-
-  String get currentWord => dragPath.map((i) => board[i]).join();
 
   int pointsFor(String word) => _dictionary.pointsFor(word) ?? 0;
 
@@ -97,12 +87,14 @@ class GameController extends ChangeNotifier {
     notifyListeners();
   }
 
+  @override
   void pointerDownAt(int index) {
     if (!gameActive || isPaused) return;
     dragPath = [index];
     notifyListeners();
   }
 
+  @override
   void pointerMoveTo(int index) {
     if (!gameActive || isPaused || dragPath.isEmpty) return;
     if (!dragPath.contains(index)) {
@@ -111,12 +103,14 @@ class GameController extends ChangeNotifier {
     }
   }
 
+  @override
   void cancelDrag() {
     if (dragPath.isEmpty) return;
     dragPath = [];
     notifyListeners();
   }
 
+  @override
   void endDrag() {
     if (dragPath.isEmpty) return;
 
@@ -124,11 +118,11 @@ class GameController extends ChangeNotifier {
 
     switch (outcome.type) {
       case WordOutcomeType.tooShort:
-        _setMessage('קצר מדי!', GameMessageType.error);
+        setMessage('קצר מדי!', GameMessageType.error);
       case WordOutcomeType.unknown:
-        _setMessage('נשלח לבדיקה — תודה!', GameMessageType.success);
+        setMessage('נשלח לבדיקה — תודה!', GameMessageType.success);
       case WordOutcomeType.alreadyFound:
-        _setMessage('כבר מצאת!', GameMessageType.warning);
+        setMessage('כבר מצאת!', GameMessageType.warning);
       case WordOutcomeType.scored:
         foundWords.add(outcome.word);
         score += outcome.points;
@@ -147,13 +141,8 @@ class GameController extends ChangeNotifier {
     );
     if (remaining.isEmpty) {
       board = List<String>.from(board)..shuffle();
-      _setMessage('נגמרו המילים — הלוח עורבב!', GameMessageType.info);
+      setMessage('נגמרו המילים — הלוח עורבב!', GameMessageType.info);
     }
-  }
-
-  void _setMessage(String text, GameMessageType type) {
-    message = GameMessage(text, type);
-    messageNonce++;
   }
 
   double get progress => _totalDuration == 0 ? 0 : timeLeft / _totalDuration;
