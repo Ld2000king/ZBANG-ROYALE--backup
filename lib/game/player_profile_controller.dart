@@ -3,14 +3,15 @@
 
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/avatars_data.dart';
 import '../core/shop_data.dart';
 
-/// Persistent player economy - coins, diamonds, the power-up inventory, and
-/// the single-player best score. Ported from gameState in game.js, saved as
+/// Persistent player state - the economy (coins, diamonds, power-up
+/// inventory), the equipped avatar, the single-player best score, and the
+/// chosen theme. Ported from gameState in game.js, saved as
 /// one JSON blob (mirroring localStorage's 'zabangState' key) instead of
 /// scattering separate SharedPreferences keys.
 class PlayerProfileController extends ChangeNotifier {
@@ -21,7 +22,9 @@ class PlayerProfileController extends ChangeNotifier {
     required int bestSingleScore,
     required String avatarId,
     required Set<String> ownedAvatars,
+    required bool darkMode,
   })  : _coins = coins,
+        _darkMode = darkMode,
         _diamonds = diamonds,
         _inventory = inventory,
         _bestSingleScore = bestSingleScore,
@@ -46,6 +49,7 @@ class PlayerProfileController extends ChangeNotifier {
         bestSingleScore: 0,
         avatarId: kDefaultAvatarId,
         ownedAvatars: {},
+        darkMode: false,
       );
     }
 
@@ -63,6 +67,7 @@ class PlayerProfileController extends ChangeNotifier {
       bestSingleScore: decoded['bestSingleScore'] as int? ?? 0,
       avatarId: decoded['avatarId'] as String? ?? kDefaultAvatarId,
       ownedAvatars: savedOwnedAvatars.cast<String>().toSet(),
+      darkMode: decoded['darkMode'] as bool? ?? false,
     );
   }
 
@@ -72,11 +77,17 @@ class PlayerProfileController extends ChangeNotifier {
   int _bestSingleScore;
   String _avatarId;
   final Set<String> _ownedAvatars;
+  bool _darkMode;
 
   int get coins => _coins;
   int get diamonds => _diamonds;
   int get bestSingleScore => _bestSingleScore;
   String get avatarId => _avatarId;
+  bool get darkMode => _darkMode;
+
+  /// What MaterialApp should render with. The app ships light by default;
+  /// the player opts into dark from the Profile screen.
+  ThemeMode get themeMode => _darkMode ? ThemeMode.dark : ThemeMode.light;
 
   int inventoryCount(String key) => _inventory[key] ?? 0;
 
@@ -98,6 +109,7 @@ class PlayerProfileController extends ChangeNotifier {
         'bestSingleScore': _bestSingleScore,
         'avatarId': _avatarId,
         'ownedAvatars': _ownedAvatars.toList(),
+        'darkMode': _darkMode,
       }),
     );
   }
@@ -159,6 +171,13 @@ class PlayerProfileController extends ChangeNotifier {
     notifyListeners();
     _persist();
     return true;
+  }
+
+  void setDarkMode(bool value) {
+    if (_darkMode == value) return;
+    _darkMode = value;
+    notifyListeners();
+    _persist();
   }
 
   /// Ported from buyAvatar(): premium avatars are bought with diamonds.

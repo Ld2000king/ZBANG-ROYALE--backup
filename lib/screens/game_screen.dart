@@ -5,7 +5,6 @@ import '../core/constants.dart';
 import '../game/game_controller.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_radii.dart';
-import '../theme/app_shadows.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
 import '../widgets/app_icon.dart';
@@ -17,6 +16,7 @@ import '../widgets/hud/timer_display.dart';
 import '../widgets/letter_grid.dart';
 import '../widgets/pressable_scale.dart';
 import 'result_screen.dart';
+import '../theme/app_palette.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key, required this.duration});
@@ -66,7 +66,7 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgDeep,
+      backgroundColor: context.palette.bgDeep,
       body: SafeArea(
         child: Consumer<GameController>(
           builder: (context, controller, _) {
@@ -116,9 +116,9 @@ class _StatusCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl, vertical: AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.panelLight,
+        color: context.palette.panelLight,
         borderRadius: BorderRadius.circular(AppRadii.card),
-        boxShadow: AppShadows.sm,
+        boxShadow: context.palette.shadowSm,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -128,13 +128,13 @@ class _StatusCard extends StatelessWidget {
             onTap: controller.togglePause,
             child: Container(
               padding: const EdgeInsets.all(AppSpacing.sm),
-              decoration: const BoxDecoration(
-                color: AppColors.surface2,
+              decoration: BoxDecoration(
+                color: context.palette.surface2,
                 shape: BoxShape.circle,
               ),
               child: AppIcon(
                 controller.isPaused ? 'play' : 'pause',
-                color: AppColors.textPrimary,
+                color: context.palette.textPrimary,
                 size: 20,
               ),
             ),
@@ -164,7 +164,7 @@ class _CurrentWordPill extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
             decoration: BoxDecoration(
-              color: AppColors.surface2,
+              color: context.palette.surface2,
               borderRadius: BorderRadius.circular(999),
             ),
             child: Text(word.isEmpty ? ' ' : word, style: AppTextStyles.heading),
@@ -188,9 +188,9 @@ class _BoardCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.panelLight,
+        color: context.palette.panelLight,
         borderRadius: BorderRadius.circular(AppRadii.card),
-        boxShadow: AppShadows.md,
+        boxShadow: context.palette.shadowMd,
       ),
       child: Stack(
         alignment: Alignment.center,
@@ -202,7 +202,7 @@ class _BoardCard extends StatelessWidget {
           if (controller.isPaused)
             Container(
               decoration: BoxDecoration(
-                color: AppColors.bgDeep.withValues(alpha: 0.85),
+                color: context.palette.bgDeep.withValues(alpha: 0.85),
                 borderRadius: BorderRadius.circular(AppRadii.card),
               ),
               child: Center(
@@ -225,9 +225,9 @@ class _PowerUpsCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.panelLight,
+        color: context.palette.panelLight,
         borderRadius: BorderRadius.circular(AppRadii.card),
-        boxShadow: AppShadows.sm,
+        boxShadow: context.palette.shadowSm,
       ),
       child: PowerUpBar(
         items: [
@@ -263,16 +263,16 @@ class _FoundWordsCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.panelLight,
+        color: context.palette.panelLight,
         borderRadius: BorderRadius.circular(AppRadii.card),
-        boxShadow: AppShadows.sm,
+        boxShadow: context.palette.shadowSm,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'מילים שנמצאו (${controller.foundWords.length})',
-            style: AppTextStyles.bodySecondary,
+            style: context.palette.secondaryText,
           ),
           const SizedBox(height: AppSpacing.sm),
           Expanded(

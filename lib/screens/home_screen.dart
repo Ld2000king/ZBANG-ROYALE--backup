@@ -13,6 +13,7 @@ import 'battle_difficulty_screen.dart';
 import 'home_shell.dart';
 import 'profile_screen.dart';
 import 'single_duration_screen.dart';
+import '../theme/app_palette.dart';
 
 /// The Home tab inside [HomeShell]: currency chips, the player card, and the
 /// game-mode grid. Modes launch straight from here - there's no separate
@@ -56,7 +57,7 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: AppSpacing.xl),
           Text('זבאנג רויאל', style: AppTextStyles.title),
           const SizedBox(height: AppSpacing.xs),
-          Text('מצא מילים בעברית על הלוח', style: AppTextStyles.bodySecondary),
+          Text('מצא מילים בעברית על הלוח', style: context.palette.secondaryText),
           const SizedBox(height: AppSpacing.lg),
           PlayerHeaderCard(
             avatar: avatar,
@@ -114,24 +115,24 @@ class _ModeGrid extends StatelessWidget {
               ),
             ),
             sized(
-              const ModeCard(
+              ModeCard(
                 iconName: 'users',
                 title: 'מולטיפלייר',
                 subtitle: 'נגד חברים בזמן אמת',
                 fill: AppColors.violetFill,
                 badge: 'בקרוב',
-                badgeColor: AppColors.textSecondary,
+                badgeColor: context.palette.textSecondary,
                 enabled: false,
               ),
             ),
             sized(
-              const ModeCard(
+              ModeCard(
                 iconName: 'versus',
                 title: 'התאמה אקראית',
                 subtitle: 'קרב 1 על 1',
                 fill: AppColors.skyFill,
                 badge: 'בקרוב',
-                badgeColor: AppColors.textSecondary,
+                badgeColor: context.palette.textSecondary,
                 enabled: false,
               ),
             ),

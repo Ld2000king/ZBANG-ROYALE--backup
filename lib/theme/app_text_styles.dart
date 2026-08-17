@@ -1,9 +1,13 @@
 import 'package:flutter/widgets.dart';
 
-import 'app_colors.dart';
 
 /// Rubik for display/headings/board letters/score/timer, Poppins for body -
 /// ported from --font-display / --font-body in style.css.
+///
+/// None of these carry a color. Color comes from the active [AppPalette]
+/// (via the theme's TextTheme for plain text, or `context.palette` where a
+/// widget needs the muted tone), which is what lets one const style serve
+/// both the light and dark themes.
 ///
 /// Poppins has no Hebrew glyphs at all. On the web the original CSS gets
 /// away with `font-family: 'Poppins', sans-serif` because browsers fall
@@ -26,7 +30,6 @@ class AppTextStyles {
     fontSize: 34,
     height: 1.1,
     letterSpacing: -0.5,
-    color: AppColors.textPrimary,
   );
 
   static const TextStyle heading = TextStyle(
@@ -35,7 +38,6 @@ class AppTextStyles {
     fontSize: 22,
     height: 1.2,
     letterSpacing: -0.2,
-    color: AppColors.textPrimary,
   );
 
   /// Card titles in the mode grid - heavier than [heading] at a smaller size,
@@ -45,7 +47,6 @@ class AppTextStyles {
     fontWeight: FontWeight.w800,
     fontSize: 17,
     height: 1.15,
-    color: AppColors.textPrimary,
   );
 
   /// Small all-caps-feeling label for badges and chips.
@@ -54,35 +55,30 @@ class AppTextStyles {
     fontWeight: FontWeight.w700,
     fontSize: 11,
     height: 1.2,
-    color: AppColors.textPrimary,
   );
 
   static const TextStyle boardLetter = TextStyle(
     fontFamily: _display,
     fontWeight: FontWeight.w800,
     fontSize: 22,
-    color: AppColors.textPrimary,
   );
 
   static const TextStyle score = TextStyle(
     fontFamily: _display,
     fontWeight: FontWeight.w700,
     fontSize: 20,
-    color: AppColors.textPrimary,
   );
 
   static const TextStyle timer = TextStyle(
     fontFamily: _display,
     fontWeight: FontWeight.w700,
     fontSize: 20,
-    color: AppColors.textPrimary,
   );
 
   static const TextStyle button = TextStyle(
     fontFamily: _display,
     fontWeight: FontWeight.w700,
     fontSize: 17,
-    color: AppColors.textLight,
   );
 
   static const TextStyle body = TextStyle(
@@ -90,7 +86,6 @@ class AppTextStyles {
     fontFamilyFallback: _bodyFallback,
     fontWeight: FontWeight.w400,
     fontSize: 15,
-    color: AppColors.textPrimary,
   );
 
   static const TextStyle bodySecondary = TextStyle(
@@ -98,7 +93,6 @@ class AppTextStyles {
     fontFamilyFallback: _bodyFallback,
     fontWeight: FontWeight.w400,
     fontSize: 14,
-    color: AppColors.textSecondary,
   );
 
   static const TextStyle bodyEmphasis = TextStyle(
@@ -106,6 +100,5 @@ class AppTextStyles {
     fontFamilyFallback: _bodyFallback,
     fontWeight: FontWeight.w600,
     fontSize: 15,
-    color: AppColors.textPrimary,
   );
 }

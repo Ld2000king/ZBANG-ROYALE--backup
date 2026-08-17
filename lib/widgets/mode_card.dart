@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
 import '../theme/app_radii.dart';
-import '../theme/app_shadows.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
 import 'app_icon.dart';
 import 'pressable_scale.dart';
+import '../theme/app_palette.dart';
 
 /// One tile in the home screen's game-mode grid: a bright pastel card with
 /// a white icon badge, a bold title, a one-line subtitle, and an optional
 /// corner badge ("חדש" / "בקרוב").
 ///
 /// The fill colors are the *Fill pastels, so all text on them is
-/// [AppColors.textPrimary] - never white.
+/// [context.palette.textPrimary] - never white.
 class ModeCard extends StatelessWidget {
   const ModeCard({
     super.key,
@@ -40,15 +40,19 @@ class ModeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveFill = enabled ? fill : AppColors.mutedFill;
-    final contentColor = enabled ? AppColors.textPrimary : AppColors.textSecondary;
+    // An enabled card sits on a fixed bright pastel, so its content is
+    // always the fixed dark tone - the palette's textPrimary would go light
+    // in dark mode and vanish against the lime. A disabled card drops the
+    // pastel entirely and uses a palette surface, so it follows the theme.
+    final effectiveFill = enabled ? fill : context.palette.surface2;
+    final contentColor = enabled ? AppColors.onBrightFill : context.palette.textSecondary;
 
     final card = Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: effectiveFill,
         borderRadius: BorderRadius.circular(AppRadii.card),
-        boxShadow: enabled ? AppShadows.sm : null,
+        boxShadow: enabled ? context.palette.shadowSm : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +62,10 @@ class ModeCard extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: AppColors.panelLight.withValues(alpha: enabled ? 0.85 : 0.6),
+              // White on the pastel in both themes, matching contentColor.
+              color: enabled
+                  ? AppColors.textLight.withValues(alpha: 0.85)
+                  : context.palette.panelLight.withValues(alpha: 0.6),
               borderRadius: BorderRadius.circular(AppRadii.sm),
             ),
             child: Center(child: AppIcon(iconName, size: 22, color: contentColor)),
@@ -73,7 +80,7 @@ class ModeCard extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             subtitle,
-            style: AppTextStyles.bodySecondary.copyWith(
+            style: context.palette.secondaryText.copyWith(
               color: contentColor.withValues(alpha: 0.75),
               fontSize: 12,
             ),
@@ -93,7 +100,7 @@ class ModeCard extends StatelessWidget {
               PositionedDirectional(
                 top: -8,
                 start: -4,
-                child: _CornerBadge(label: badge!, color: badgeColor ?? AppColors.textPrimary),
+                child: _CornerBadge(label: badge!, color: badgeColor ?? context.palette.textPrimary),
               ),
             ],
           );
@@ -115,7 +122,7 @@ class _CornerBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(999),
-        boxShadow: AppShadows.sm,
+        boxShadow: context.palette.shadowSm,
       ),
       child: Text(label, style: AppTextStyles.badge.copyWith(color: AppColors.textLight)),
     );

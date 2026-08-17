@@ -15,6 +15,7 @@ import '../widgets/letter_grid.dart';
 import '../widgets/pressable_scale.dart';
 import 'battle_result_screen.dart';
 import 'round_end_screen.dart';
+import '../theme/app_palette.dart';
 
 class BattleScreen extends StatefulWidget {
   const BattleScreen({super.key});
@@ -70,7 +71,7 @@ class _BattleScreenState extends State<BattleScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgDeep,
+      backgroundColor: context.palette.bgDeep,
       body: SafeArea(
         child: Consumer<BattleController>(
           builder: (context, controller, _) {
@@ -84,7 +85,7 @@ class _BattleScreenState extends State<BattleScreen> {
                     children: [
                       Text(
                         'סיבוב ${controller.currentRound}/$kBattleTotalRounds · $diffName',
-                        style: AppTextStyles.bodySecondary,
+                        style: context.palette.secondaryText,
                       ),
                       PressableScale(
                         onTap: controller.togglePause,
@@ -92,7 +93,7 @@ class _BattleScreenState extends State<BattleScreen> {
                           padding: const EdgeInsets.all(8),
                           child: AppIcon(
                             controller.isPaused ? 'play' : 'pause',
-                            color: AppColors.textPrimary,
+                            color: context.palette.textPrimary,
                           ),
                         ),
                       ),
@@ -126,7 +127,7 @@ class _BattleScreenState extends State<BattleScreen> {
                         if (controller.isPaused)
                           Container(
                             decoration: BoxDecoration(
-                              color: AppColors.bgDeep.withValues(alpha: 0.85),
+                              color: context.palette.bgDeep.withValues(alpha: 0.85),
                               borderRadius: BorderRadius.circular(AppRadii.card),
                             ),
                             child: Center(

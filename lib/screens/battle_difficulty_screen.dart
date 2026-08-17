@@ -8,6 +8,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import '../widgets/buttons/app_button.dart';
 import 'battle_screen.dart';
+import '../theme/app_palette.dart';
 
 class BattleDifficultyScreen extends StatelessWidget {
   const BattleDifficultyScreen({super.key});
@@ -29,9 +30,9 @@ class BattleDifficultyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgDeep,
+      backgroundColor: context.palette.bgDeep,
       appBar: AppBar(
-        backgroundColor: AppColors.bgDeep,
+        backgroundColor: context.palette.bgDeep,
         title: Text('בחר רמת קושי', style: AppTextStyles.heading),
         centerTitle: true,
       ),

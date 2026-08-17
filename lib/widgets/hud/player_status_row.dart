@@ -4,6 +4,7 @@ import '../../game/battle.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_radii.dart';
 import '../../theme/app_text_styles.dart';
+import '../../theme/app_palette.dart';
 
 /// Ported from updateBattleUI() in game.js: the player first, then every
 /// still-active bot, each showing name + live score.
@@ -43,14 +44,14 @@ class _StatusChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: highlighted ? AppColors.green.withValues(alpha: 0.18) : AppColors.surface2,
-        border: Border.all(color: highlighted ? AppColors.green : AppColors.surface3),
+        color: highlighted ? AppColors.green.withValues(alpha: 0.18) : context.palette.surface2,
+        border: Border.all(color: highlighted ? AppColors.green : context.palette.surface3),
         borderRadius: BorderRadius.circular(AppRadii.sm),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(name, style: AppTextStyles.bodySecondary),
+          Text(name, style: context.palette.secondaryText),
           Text('$score', style: AppTextStyles.bodyEmphasis),
         ],
       ),

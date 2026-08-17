@@ -9,6 +9,7 @@ import '../theme/app_theme.dart';
 import '../widgets/app_icon.dart';
 import '../widgets/avatar_circle.dart';
 import '../widgets/pressable_scale.dart';
+import '../theme/app_palette.dart';
 
 /// Ported from renderProfile()'s stats block + the avatar gallery.
 class ProfileScreen extends StatelessWidget {
@@ -20,9 +21,9 @@ class ProfileScreen extends StatelessWidget {
     final currentAvatar = avatarById(profile.avatarId);
 
     return Scaffold(
-      backgroundColor: AppColors.bgDeep,
+      backgroundColor: context.palette.bgDeep,
       appBar: AppBar(
-        backgroundColor: AppColors.bgDeep,
+        backgroundColor: context.palette.bgDeep,
         title: Text('פרופיל', style: AppTextStyles.heading),
         centerTitle: true,
       ),
@@ -36,7 +37,7 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: appCardDecoration(),
+              decoration: appCardDecoration(context),
               child: Column(
                 children: [
                   _StatRow(iconName: 'coin', label: 'מטבעות', value: '${profile.coins}'),
@@ -51,6 +52,10 @@ class ProfileScreen extends StatelessWidget {
                 ],
               ),
             ),
+            const SizedBox(height: 24),
+            Text('הגדרות', style: AppTextStyles.heading.copyWith(fontSize: 18)),
+            const SizedBox(height: 12),
+            _DarkModeRow(profile: profile),
             const SizedBox(height: 24),
             Text('תמונות פרופיל', style: AppTextStyles.heading.copyWith(fontSize: 18)),
             const SizedBox(height: 12),
@@ -90,7 +95,7 @@ class ProfileScreen extends StatelessWidget {
                           children: [
                             const AppIcon('diamond', size: 12),
                             const SizedBox(width: 2),
-                            Text('$kAvatarDiamondCost', style: AppTextStyles.bodySecondary.copyWith(fontSize: 10)),
+                            Text('$kAvatarDiamondCost', style: context.palette.secondaryText.copyWith(fontSize: 10)),
                           ],
                         ),
                       ],
@@ -121,6 +126,45 @@ class ProfileScreen extends StatelessWidget {
         : 'אין מספיק יהלומים! (עולה $kAvatarDiamondCost)';
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
     if (bought) profile.selectAvatar(avatar.id);
+  }
+}
+
+/// The dark-mode switch. Flipping it persists the choice and rebuilds
+/// MaterialApp with the other theme.
+class _DarkModeRow extends StatelessWidget {
+  const _DarkModeRow({required this.profile});
+
+  final PlayerProfileController profile;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: appCardDecoration(context),
+      child: Row(
+        children: [
+          AppIcon(profile.darkMode ? 'freeze' : 'hint', size: 18),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('מצב כהה', style: AppTextStyles.body),
+                Text(
+                  profile.darkMode ? 'העיצוב הכהה פעיל' : 'העיצוב הבהיר פעיל',
+                  style: context.palette.secondaryText.copyWith(fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+          Switch(
+            value: profile.darkMode,
+            onChanged: profile.setDarkMode,
+          ),
+        ],
+      ),
+    );
   }
 }
 

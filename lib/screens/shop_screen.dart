@@ -8,6 +8,7 @@ import '../theme/app_text_styles.dart';
 import '../theme/app_theme.dart';
 import '../widgets/buttons/app_button.dart';
 import '../widgets/stat_chip.dart';
+import '../theme/app_palette.dart';
 
 /// Ported from renderShop()'s power-up section + the mock rewarded-ad card.
 /// Coin IAP packages and premium avatars are left for a later polish pass.
@@ -19,9 +20,9 @@ class ShopScreen extends StatelessWidget {
     final profile = context.watch<PlayerProfileController>();
 
     return Scaffold(
-      backgroundColor: AppColors.bgDeep,
+      backgroundColor: context.palette.bgDeep,
       appBar: AppBar(
-        backgroundColor: AppColors.bgDeep,
+        backgroundColor: context.palette.bgDeep,
         title: Text('חנות', style: AppTextStyles.heading),
         centerTitle: true,
       ),
@@ -63,7 +64,7 @@ class _AdCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: appCardDecoration(),
+      decoration: appCardDecoration(context),
       child: Row(
         children: [
           Expanded(
@@ -71,7 +72,7 @@ class _AdCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('צפה בסרטון', style: AppTextStyles.bodyEmphasis),
-                Text('קבל $kAdRewardCoins מטבעות חינם', style: AppTextStyles.bodySecondary),
+                Text('קבל $kAdRewardCoins מטבעות חינם', style: context.palette.secondaryText),
               ],
             ),
           ),
@@ -107,7 +108,7 @@ class _ShopItemRow extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(14),
-      decoration: appCardDecoration(),
+      decoration: appCardDecoration(context),
       child: Row(
         children: [
           Expanded(
@@ -115,7 +116,7 @@ class _ShopItemRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('${item.name}  ·  במלאי: $owned', style: AppTextStyles.bodyEmphasis),
-                Text(item.desc, style: AppTextStyles.bodySecondary),
+                Text(item.desc, style: context.palette.secondaryText),
               ],
             ),
           ),

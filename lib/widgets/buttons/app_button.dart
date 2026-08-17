@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../theme/app_colors.dart';
 import '../../theme/app_radii.dart';
-import '../../theme/app_shadows.dart';
 import '../../theme/app_text_styles.dart';
 import '../app_icon.dart';
 import '../pressable_scale.dart';
+import '../../theme/app_palette.dart';
 
 enum AppButtonColor { green, gold, blue, orange, purple, red }
 
@@ -57,7 +57,7 @@ class AppButton extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppRadii.btn),
-          boxShadow: active == null ? null : AppShadows.accent(base),
+          boxShadow: active == null ? null : accentShadow(base),
         ),
         child: SizedBox(
           width: double.infinity,
@@ -65,8 +65,8 @@ class AppButton extends StatelessWidget {
             onPressed: active,
             style: ElevatedButton.styleFrom(
               backgroundColor: base,
-              disabledBackgroundColor: AppColors.surface3,
-              disabledForegroundColor: AppColors.textSecondary,
+              disabledBackgroundColor: context.palette.surface3,
+              disabledForegroundColor: context.palette.textSecondary,
               foregroundColor: AppColors.textLight,
               padding: EdgeInsets.symmetric(
                 horizontal: compact ? 12 : 20,

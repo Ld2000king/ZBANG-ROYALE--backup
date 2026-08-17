@@ -6,6 +6,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_radii.dart';
 import '../theme/app_text_styles.dart';
 import '../widgets/buttons/app_button.dart';
+import '../theme/app_palette.dart';
 
 /// Ported from showRoundEnd() in game.js: standings for the round just
 /// played, with the eliminated player/bot flagged, and a "next round" CTA.
@@ -19,7 +20,7 @@ class RoundEndScreen extends StatelessWidget {
     final standings = result.standings!;
 
     return Scaffold(
-      backgroundColor: AppColors.bgDeep,
+      backgroundColor: context.palette.bgDeep,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -35,12 +36,12 @@ class RoundEndScreen extends StatelessWidget {
                   margin: const EdgeInsets.only(bottom: 8),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: s.eliminated ? AppColors.red.withValues(alpha: 0.18) : AppColors.panelLight,
+                    color: s.eliminated ? AppColors.red.withValues(alpha: 0.18) : context.palette.panelLight,
                     borderRadius: BorderRadius.circular(AppRadii.sm),
                   ),
                   child: Row(
                     children: [
-                      Text('#${i + 1}', style: AppTextStyles.bodySecondary),
+                      Text('#${i + 1}', style: context.palette.secondaryText),
                       const SizedBox(width: 12),
                       Expanded(child: Text(s.name, style: AppTextStyles.bodyEmphasis)),
                       Text('${s.score}', style: AppTextStyles.bodyEmphasis),

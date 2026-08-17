@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zbang_royale/core/avatars_data.dart';
@@ -105,6 +106,22 @@ void main() {
     expect(reloaded.coins, 100 + 250 - 20);
     expect(reloaded.inventoryCount('freeze'), 1);
     expect(reloaded.bestSingleScore, 777);
+  });
+
+  test('a fresh profile is light, and the theme choice persists', () async {
+    final profile = await PlayerProfileController.load();
+    expect(profile.darkMode, isFalse);
+    expect(profile.themeMode, ThemeMode.light);
+
+    profile.setDarkMode(true);
+    expect(profile.themeMode, ThemeMode.dark);
+
+    // Give the fire-and-forget persistence a turn to actually write.
+    await Future<void>.delayed(Duration.zero);
+
+    final reloaded = await PlayerProfileController.load();
+    expect(reloaded.darkMode, isTrue);
+    expect(reloaded.themeMode, ThemeMode.dark);
   });
 
   test('a fresh profile owns every free avatar but no premium one', () async {

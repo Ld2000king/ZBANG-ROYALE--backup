@@ -8,6 +8,7 @@ import '../theme/app_text_styles.dart';
 import '../widgets/buttons/app_button.dart';
 import 'battle_difficulty_screen.dart';
 import 'home_shell.dart';
+import '../theme/app_palette.dart';
 
 /// Ported from the two endBattleRound() outcomes that end the run: player
 /// eliminated (defeat) or the final round won (victory + coin/diamond bonus).
@@ -52,7 +53,7 @@ class _BattleResultScreenState extends State<BattleResultScreen> {
     final isVictory = result.type == BattleOutcomeType.victory;
 
     return Scaffold(
-      backgroundColor: AppColors.bgDeep,
+      backgroundColor: context.palette.bgDeep,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),

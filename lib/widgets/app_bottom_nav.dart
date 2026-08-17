@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
-import '../theme/app_shadows.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
 import 'app_icon.dart';
 import 'pressable_scale.dart';
+import '../theme/app_palette.dart';
 
 class BottomNavItem {
   const BottomNavItem({required this.iconName, required this.label});
@@ -31,10 +31,10 @@ class AppBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.panelLight,
-        border: Border(top: BorderSide(color: AppColors.hairline)),
-        boxShadow: AppShadows.sm,
+      decoration: BoxDecoration(
+        color: context.palette.panelLight,
+        border: Border(top: BorderSide(color: context.palette.hairline)),
+        boxShadow: context.palette.shadowSm,
       ),
       child: SafeArea(
         top: false,
@@ -69,6 +69,12 @@ class _NavButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The active pill is a fixed bright lime in both themes, so its label
+    // must use the fixed dark tone - the palette's textPrimary goes light
+    // in dark mode and would disappear on it.
+    final contentColor =
+        selected ? AppColors.onBrightFill : context.palette.textSecondary;
+
     return Semantics(
       selected: selected,
       button: true,
@@ -89,18 +95,9 @@ class _NavButton extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              AppIcon(
-                item.iconName,
-                size: 22,
-                color: selected ? AppColors.textPrimary : AppColors.textSecondary,
-              ),
+              AppIcon(item.iconName, size: 22, color: contentColor),
               const SizedBox(height: 2),
-              Text(
-                item.label,
-                style: AppTextStyles.badge.copyWith(
-                  color: selected ? AppColors.textPrimary : AppColors.textSecondary,
-                ),
-              ),
+              Text(item.label, style: AppTextStyles.badge.copyWith(color: contentColor)),
             ],
           ),
         ),

@@ -10,6 +10,7 @@ import '../theme/app_text_styles.dart';
 import '../widgets/buttons/app_button.dart';
 import 'game_screen.dart';
 import 'home_shell.dart';
+import '../theme/app_palette.dart';
 
 class ResultScreen extends StatefulWidget {
   const ResultScreen({
@@ -64,7 +65,7 @@ class _ResultScreenState extends State<ResultScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgDeep,
+      backgroundColor: context.palette.bgDeep,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -74,7 +75,7 @@ class _ResultScreenState extends State<ResultScreen> {
               Text('הסיבוב הסתיים!', style: AppTextStyles.title.copyWith(fontSize: 28)),
               const SizedBox(height: 24),
               Text('${widget.score}', style: AppTextStyles.title),
-              Text('ניקוד', style: AppTextStyles.bodySecondary),
+              Text('ניקוד', style: context.palette.secondaryText),
               if (_isNewBest) ...[
                 const SizedBox(height: 8),
                 Text('שיא חדש!', style: AppTextStyles.bodyEmphasis.copyWith(color: AppColors.gold)),

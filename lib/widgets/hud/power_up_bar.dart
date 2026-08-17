@@ -8,6 +8,7 @@ import '../../theme/app_radii.dart';
 import '../../theme/app_text_styles.dart';
 import '../app_icon.dart';
 import '../pressable_scale.dart';
+import '../../theme/app_palette.dart';
 
 class PowerUpSpec {
   const PowerUpSpec({required this.itemKey, required this.onUse});
@@ -74,17 +75,17 @@ class _PowerUpButton extends StatelessWidget {
         width: 52,
         padding: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
-          color: AppColors.surface2,
+          color: context.palette.surface2,
           borderRadius: BorderRadius.circular(AppRadii.sm),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            AppIcon(spec.itemKey, size: 20, color: AppColors.textPrimary),
+            AppIcon(spec.itemKey, size: 20, color: context.palette.textPrimary),
             const SizedBox(height: 2),
             Text(
               count > 0 ? '$count' : '${_item.cost}',
-              style: AppTextStyles.bodySecondary.copyWith(
+              style: context.palette.secondaryText.copyWith(
                 color: count > 0 ? AppColors.green : AppColors.gold,
                 fontSize: 11,
               ),

@@ -9,6 +9,7 @@ import '../theme/app_theme.dart';
 import 'app_icon.dart';
 import 'avatar_circle.dart';
 import 'pressable_scale.dart';
+import '../theme/app_palette.dart';
 
 /// The home screen's identity card: current avatar, its name, the player's
 /// personal best, and a bar showing how far that best is toward the next
@@ -41,7 +42,7 @@ class PlayerHeaderCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.lg),
-        decoration: appCardDecoration(),
+        decoration: appCardDecoration(context),
         child: Row(
           children: [
             AvatarCircle(avatar: avatar, size: 56),
@@ -55,7 +56,7 @@ class PlayerHeaderCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     'שיא אישי: $bestScore',
-                    style: AppTextStyles.bodySecondary.copyWith(fontSize: 12),
+                    style: context.palette.secondaryText.copyWith(fontSize: 12),
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   ClipRRect(
@@ -63,14 +64,14 @@ class PlayerHeaderCard extends StatelessWidget {
                     child: LinearProgressIndicator(
                       value: progress,
                       minHeight: 8,
-                      backgroundColor: AppColors.surface3,
+                      backgroundColor: context.palette.surface3,
                       valueColor: const AlwaysStoppedAnimation(AppColors.green),
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'עוד $remaining נק׳ עד $nextMilestone',
-                    style: AppTextStyles.bodySecondary.copyWith(fontSize: 11),
+                    style: context.palette.secondaryText.copyWith(fontSize: 11),
                   ),
                 ],
               ),
@@ -79,10 +80,10 @@ class PlayerHeaderCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(AppSpacing.sm),
               decoration: BoxDecoration(
-                color: AppColors.surface2,
+                color: context.palette.surface2,
                 borderRadius: BorderRadius.circular(AppRadii.sm),
               ),
-              child: const AppIcon('pencil', size: 16, color: AppColors.textSecondary),
+              child: AppIcon('pencil', size: 16, color: context.palette.textSecondary),
             ),
           ],
         ),

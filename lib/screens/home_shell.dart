@@ -5,6 +5,7 @@ import '../widgets/app_bottom_nav.dart';
 import 'home_screen.dart';
 import 'profile_screen.dart';
 import 'shop_screen.dart';
+import '../theme/app_palette.dart';
 
 /// Lets anything inside the shell switch tabs - e.g. the Home tab's player
 /// card jumping to Profile - without pushing a route or rebuilding the shell.
@@ -59,7 +60,7 @@ class _HomeShellState extends State<HomeShell> {
     return HomeShellScope(
       goToTab: _goToTab,
       child: Scaffold(
-        backgroundColor: AppColors.bgDeep,
+        backgroundColor: context.palette.bgDeep,
         // IndexedStack keeps each tab's scroll position and state alive as
         // the player moves between them.
         body: IndexedStack(

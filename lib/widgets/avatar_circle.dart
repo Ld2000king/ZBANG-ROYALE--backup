@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../core/avatars_data.dart';
 import '../theme/app_colors.dart';
-import '../theme/app_shadows.dart';
+import '../theme/app_palette.dart';
 
 /// A gradient-circle stand-in for an avatar's full inline-SVG emblem (see
 /// AvatarInfo's doc comment) - shows the avatar's identity colors and its
@@ -24,8 +24,8 @@ class AvatarCircle extends StatelessWidget {
         gradient: RadialGradient(colors: avatar.colors),
         // A white ring lifts the saturated circle off the light page, the
         // way the avatars in the reference apps are ringed.
-        border: Border.all(color: AppColors.panelLight, width: 2.5),
-        boxShadow: AppShadows.sm,
+        border: Border.all(color: context.palette.panelLight, width: 2.5),
+        boxShadow: context.palette.shadowSm,
       ),
       child: Center(
         child: locked
