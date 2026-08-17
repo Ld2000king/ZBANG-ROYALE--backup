@@ -7,6 +7,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_radii.dart';
 import '../theme/app_text_styles.dart';
 import '../widgets/app_icon.dart';
+import '../widgets/aurora_background.dart';
 import '../widgets/avatar_circle.dart';
 import '../widgets/buttons/app_button.dart';
 import '../widgets/pressable_scale.dart';
@@ -47,59 +48,61 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
     return Scaffold(
       backgroundColor: AppColors.bgDeep,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          child: FadeTransition(
-            opacity: curved,
-            child: SlideTransition(
-              position: Tween(begin: const Offset(0, 0.05), end: Offset.zero).animate(curved),
-              child: Column(
-                children: [
-                  Text('זבאנג רויאל', textAlign: TextAlign.center, style: AppTextStyles.title),
-                  const SizedBox(height: 8),
-                  Text(
-                    'מצא מילים בעברית על הלוח',
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.bodySecondary,
-                  ),
-                  const SizedBox(height: 24),
-                  _StatsCard(profile: profile, avatar: avatar),
-                  const Spacer(),
-                  AppButton(
-                    label: 'משחק',
-                    color: AppButtonColor.green,
-                    iconName: 'play',
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const ModeSelectScreen()),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  AppButton(
-                    label: 'חנות',
-                    color: AppButtonColor.gold,
-                    iconName: 'shopBag',
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const ShopScreen()),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  AppButton(
-                    label: 'פרופיל',
-                    color: AppButtonColor.blue,
-                    iconName: 'profile',
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const ProfileScreen()),
-                      );
-                    },
-                  ),
-                  const Spacer(),
-                ],
+      body: AuroraBackground(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            child: FadeTransition(
+              opacity: curved,
+              child: SlideTransition(
+                position: Tween(begin: const Offset(0, 0.05), end: Offset.zero).animate(curved),
+                child: Column(
+                  children: [
+                    Text('זבאנג רויאל', textAlign: TextAlign.center, style: AppTextStyles.title),
+                    const SizedBox(height: 8),
+                    Text(
+                      'מצא מילים בעברית על הלוח',
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.bodySecondary,
+                    ),
+                    const SizedBox(height: 24),
+                    _StatsCard(profile: profile, avatar: avatar),
+                    const Spacer(),
+                    AppButton(
+                      label: 'משחק',
+                      color: AppButtonColor.green,
+                      iconName: 'play',
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const ModeSelectScreen()),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    AppButton(
+                      label: 'חנות',
+                      color: AppButtonColor.gold,
+                      iconName: 'shopBag',
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const ShopScreen()),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    AppButton(
+                      label: 'פרופיל',
+                      color: AppButtonColor.blue,
+                      iconName: 'profile',
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                        );
+                      },
+                    ),
+                    const Spacer(),
+                  ],
+                ),
               ),
             ),
           ),

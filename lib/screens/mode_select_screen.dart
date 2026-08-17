@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_radii.dart';
 import '../theme/app_text_styles.dart';
+import '../widgets/aurora_background.dart';
 import 'battle_difficulty_screen.dart';
 import 'single_duration_screen.dart';
 
@@ -18,44 +19,46 @@ class ModeSelectScreen extends StatelessWidget {
         title: Text('בחר מצב משחק', style: AppTextStyles.heading),
         centerTitle: true,
       ),
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(20),
-          children: [
-            _ModeTile(
-              title: 'שחקן יחיד',
-              subtitle: 'מצא כמה שיותר מילים לפני שנגמר הזמן',
-              enabled: true,
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const SingleDurationScreen()),
-                );
-              },
-            ),
-            const SizedBox(height: 12),
-            _ModeTile(
-              title: 'באטל רויאל',
-              subtitle: 'חמישה סיבובים מול בוטים',
-              enabled: true,
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const BattleDifficultyScreen()),
-                );
-              },
-            ),
-            const SizedBox(height: 12),
-            const _ModeTile(
-              title: 'מולטיפלייר',
-              subtitle: 'שחק נגד חברים בזמן אמת',
-              enabled: false,
-            ),
-            const SizedBox(height: 12),
-            const _ModeTile(
-              title: 'התאמה אקראית',
-              subtitle: 'קרב 1 על 1 מול שחקן אקראי',
-              enabled: false,
-            ),
-          ],
+      body: AuroraBackground(
+        child: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.all(20),
+            children: [
+              _ModeTile(
+                title: 'שחקן יחיד',
+                subtitle: 'מצא כמה שיותר מילים לפני שנגמר הזמן',
+                enabled: true,
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const SingleDurationScreen()),
+                  );
+                },
+              ),
+              const SizedBox(height: 12),
+              _ModeTile(
+                title: 'באטל רויאל',
+                subtitle: 'חמישה סיבובים מול בוטים',
+                enabled: true,
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const BattleDifficultyScreen()),
+                  );
+                },
+              ),
+              const SizedBox(height: 12),
+              const _ModeTile(
+                title: 'מולטיפלייר',
+                subtitle: 'שחק נגד חברים בזמן אמת',
+                enabled: false,
+              ),
+              const SizedBox(height: 12),
+              const _ModeTile(
+                title: 'התאמה אקראית',
+                subtitle: 'קרב 1 על 1 מול שחקן אקראי',
+                enabled: false,
+              ),
+            ],
+          ),
         ),
       ),
     );

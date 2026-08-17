@@ -24,13 +24,17 @@ void main() {
         child: const ZbangRoyaleApp(),
       ),
     );
-    await tester.pumpAndSettle();
+    // Home's aurora background animates forever (ambient decoration), so
+    // pumpAndSettle() never settles there - pump a bounded number of frames
+    // instead of waiting for stillness that won't come.
+    await tester.pump(const Duration(seconds: 1));
 
     expect(find.text('זבאנג רויאל'), findsOneWidget);
     expect(find.text('משחק'), findsOneWidget);
 
     await tester.tap(find.text('משחק'));
-    await tester.pumpAndSettle();
+    await tester.pump(); // let the tap's Navigator.push start the transition
+    await tester.pump(const Duration(seconds: 1)); // fast-forward past it
 
     expect(find.text('שחקן יחיד'), findsOneWidget);
   });
