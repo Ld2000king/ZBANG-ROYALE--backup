@@ -6,12 +6,15 @@ import '../../game/player_profile_controller.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_radii.dart';
 import '../../theme/app_text_styles.dart';
+import '../app_icon.dart';
+import '../pressable_scale.dart';
 
 class PowerUpSpec {
-  const PowerUpSpec({required this.itemKey, required this.icon, required this.onUse});
+  const PowerUpSpec({required this.itemKey, required this.onUse});
 
+  /// Also the AppIcon name - every shop item key matches its icon in
+  /// icons.js (hint/shuffle/freeze/freezeOpponents/tornado).
   final String itemKey;
-  final IconData icon;
 
   /// Applies the power-up's effect and returns whether it actually
   /// happened (e.g. a hint found a word) - payment is only charged when
@@ -65,9 +68,8 @@ class _PowerUpButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final count = profile.inventoryCount(spec.itemKey);
-    return InkWell(
+    return PressableScale(
       onTap: () => _handleTap(context),
-      borderRadius: BorderRadius.circular(AppRadii.sm),
       child: Container(
         width: 52,
         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -78,7 +80,7 @@ class _PowerUpButton extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(spec.icon, color: AppColors.textPrimary, size: 20),
+            AppIcon(spec.itemKey, size: 20, color: AppColors.textPrimary),
             const SizedBox(height: 2),
             Text(
               count > 0 ? '$count' : '${_item.cost}',

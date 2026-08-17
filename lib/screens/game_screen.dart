@@ -6,12 +6,14 @@ import '../game/game_controller.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_radii.dart';
 import '../theme/app_text_styles.dart';
+import '../widgets/app_icon.dart';
 import '../widgets/feedback/toast_banner.dart';
 import '../widgets/hud/found_words_panel.dart';
 import '../widgets/hud/power_up_bar.dart';
 import '../widgets/hud/score_display.dart';
 import '../widgets/hud/timer_display.dart';
 import '../widgets/letter_grid.dart';
+import '../widgets/pressable_scale.dart';
 import 'result_screen.dart';
 
 class GameScreen extends StatefulWidget {
@@ -74,11 +76,14 @@ class _GameScreenState extends State<GameScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       TimerDisplay(secondsLeft: controller.timeLeft),
-                      IconButton(
-                        onPressed: controller.togglePause,
-                        icon: Icon(
-                          controller.isPaused ? Icons.play_arrow : Icons.pause,
-                          color: AppColors.textPrimary,
+                      PressableScale(
+                        onTap: controller.togglePause,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: AppIcon(
+                            controller.isPaused ? 'play' : 'pause',
+                            color: AppColors.textPrimary,
+                          ),
                         ),
                       ),
                       ScoreDisplay(score: controller.score),
@@ -125,14 +130,9 @@ class _GameScreenState extends State<GameScreen> {
                   const SizedBox(height: 12),
                   PowerUpBar(
                     items: [
-                      PowerUpSpec(
-                        itemKey: 'hint',
-                        icon: Icons.lightbulb_outline,
-                        onUse: controller.useHint,
-                      ),
+                      PowerUpSpec(itemKey: 'hint', onUse: controller.useHint),
                       PowerUpSpec(
                         itemKey: 'shuffle',
-                        icon: Icons.shuffle,
                         onUse: () {
                           controller.useShuffle();
                           return true;
@@ -140,7 +140,6 @@ class _GameScreenState extends State<GameScreen> {
                       ),
                       PowerUpSpec(
                         itemKey: 'freeze',
-                        icon: Icons.ac_unit,
                         onUse: () {
                           controller.useFreeze();
                           return true;

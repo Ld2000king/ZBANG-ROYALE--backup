@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zbang_royale/core/avatars_data.dart';
 import 'package:zbang_royale/game/player_profile_controller.dart';
 
 void main() {
@@ -104,5 +105,52 @@ void main() {
     expect(reloaded.coins, 100 + 250 - 20);
     expect(reloaded.inventoryCount('freeze'), 1);
     expect(reloaded.bestSingleScore, 777);
+  });
+
+  test('a fresh profile owns every free avatar but no premium one', () async {
+    final profile = await PlayerProfileController.load();
+    for (final avatar in kAvatars.where((a) => !a.premium)) {
+      expect(profile.isAvatarOwned(avatar.id), isTrue);
+    }
+    for (final avatar in kAvatars.where((a) => a.premium)) {
+      expect(profile.isAvatarOwned(avatar.id), isFalse);
+    }
+    expect(profile.avatarId, kDefaultAvatarId);
+  });
+
+  test('selectAvatar switches to any owned (free) avatar', () async {
+    final profile = await PlayerProfileController.load();
+    final freeAvatar = kAvatars.firstWhere((a) => !a.premium && a.id != kDefaultAvatarId);
+    expect(profile.selectAvatar(freeAvatar.id), isTrue);
+    expect(profile.avatarId, freeAvatar.id);
+  });
+
+  test('selectAvatar refuses an unowned premium avatar', () async {
+    final profile = await PlayerProfileController.load();
+    final premiumAvatar = kAvatars.firstWhere((a) => a.premium);
+    expect(profile.selectAvatar(premiumAvatar.id), isFalse);
+    expect(profile.avatarId, kDefaultAvatarId);
+  });
+
+  test('buyAvatar spends diamonds and unlocks a premium avatar', () async {
+    final profile = await PlayerProfileController.load();
+    final premiumAvatar = kAvatars.firstWhere((a) => a.premium);
+    profile.addDiamonds(kAvatarDiamondCost);
+
+    final bought = profile.buyAvatar(premiumAvatar.id);
+    expect(bought, isTrue);
+    expect(profile.diamonds, 0);
+    expect(profile.isAvatarOwned(premiumAvatar.id), isTrue);
+    expect(profile.selectAvatar(premiumAvatar.id), isTrue);
+  });
+
+  test('buyAvatar fails without enough diamonds and charges nothing', () async {
+    final profile = await PlayerProfileController.load();
+    final premiumAvatar = kAvatars.firstWhere((a) => a.premium);
+
+    final bought = profile.buyAvatar(premiumAvatar.id);
+    expect(bought, isFalse);
+    expect(profile.diamonds, 0);
+    expect(profile.isAvatarOwned(premiumAvatar.id), isFalse);
   });
 }

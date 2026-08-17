@@ -6,11 +6,13 @@ import '../game/battle_controller.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_radii.dart';
 import '../theme/app_text_styles.dart';
+import '../widgets/app_icon.dart';
 import '../widgets/feedback/toast_banner.dart';
 import '../widgets/hud/player_status_row.dart';
 import '../widgets/hud/power_up_bar.dart';
 import '../widgets/hud/timer_display.dart';
 import '../widgets/letter_grid.dart';
+import '../widgets/pressable_scale.dart';
 import 'battle_result_screen.dart';
 import 'round_end_screen.dart';
 
@@ -84,11 +86,14 @@ class _BattleScreenState extends State<BattleScreen> {
                         'סיבוב ${controller.currentRound}/$kBattleTotalRounds · $diffName',
                         style: AppTextStyles.bodySecondary,
                       ),
-                      IconButton(
-                        onPressed: controller.togglePause,
-                        icon: Icon(
-                          controller.isPaused ? Icons.play_arrow : Icons.pause,
-                          color: AppColors.textPrimary,
+                      PressableScale(
+                        onTap: controller.togglePause,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: AppIcon(
+                            controller.isPaused ? 'play' : 'pause',
+                            color: AppColors.textPrimary,
+                          ),
                         ),
                       ),
                     ],
@@ -134,14 +139,9 @@ class _BattleScreenState extends State<BattleScreen> {
                   const SizedBox(height: 12),
                   PowerUpBar(
                     items: [
-                      PowerUpSpec(
-                        itemKey: 'hint',
-                        icon: Icons.lightbulb_outline,
-                        onUse: controller.useHint,
-                      ),
+                      PowerUpSpec(itemKey: 'hint', onUse: controller.useHint),
                       PowerUpSpec(
                         itemKey: 'shuffle',
-                        icon: Icons.shuffle,
                         onUse: () {
                           controller.useShuffle();
                           return true;
@@ -149,7 +149,6 @@ class _BattleScreenState extends State<BattleScreen> {
                       ),
                       PowerUpSpec(
                         itemKey: 'freezeOpponents',
-                        icon: Icons.ac_unit,
                         onUse: () {
                           controller.useFreezeOpponents();
                           return true;
@@ -157,7 +156,6 @@ class _BattleScreenState extends State<BattleScreen> {
                       ),
                       PowerUpSpec(
                         itemKey: 'tornado',
-                        icon: Icons.storm,
                         onUse: () {
                           controller.useTornado();
                           return true;

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_radii.dart';
 import '../../theme/app_text_styles.dart';
+import '../pressable_scale.dart';
 
 enum AppButtonColor { green, gold, blue, orange, purple, red }
 
@@ -16,7 +17,9 @@ const Map<AppButtonColor, Color> _colorMap = {
 };
 
 /// Mirrors the .btn-large color-class variants (green/gold/blue/orange/
-/// purple/red), each owning one action across the app.
+/// purple/red), each owning one action across the app. Presses bounce on
+/// the app's one spring curve (PressableScale), not just a flat state
+/// change.
 class AppButton extends StatelessWidget {
   const AppButton({
     super.key,
@@ -34,21 +37,26 @@ class AppButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final base = _colorMap[color]!;
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: enabled ? onPressed : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: base,
-          disabledBackgroundColor: base.withValues(alpha: 0.35),
-          foregroundColor: AppColors.textLight,
-          padding: const EdgeInsets.symmetric(vertical: 18),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadii.btn),
+    final active = enabled ? onPressed : null;
+
+    return PressableScale(
+      onTap: active,
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: active,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: base,
+            disabledBackgroundColor: base.withValues(alpha: 0.35),
+            foregroundColor: AppColors.textLight,
+            padding: const EdgeInsets.symmetric(vertical: 18),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadii.btn),
+            ),
+            elevation: 0,
           ),
-          elevation: 0,
+          child: Text(label, style: AppTextStyles.button),
         ),
-        child: Text(label, style: AppTextStyles.button),
       ),
     );
   }
