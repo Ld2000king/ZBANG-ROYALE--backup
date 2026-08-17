@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../game/player_profile_controller.dart';
+import '../theme/app_colors.dart';
 import '../widgets/app_bottom_nav.dart';
+import '../widgets/app_icon.dart';
 import '../widgets/aurora_background.dart';
+import '../widgets/pressable_scale.dart';
+import 'daily_reward_screen.dart';
 import 'home_screen.dart';
 import 'profile_screen.dart';
 import 'shop_screen.dart';
@@ -44,11 +50,31 @@ class HomeShell extends StatefulWidget {
 class _HomeShellState extends State<HomeShell> {
   late int _index = widget.initialIndex;
 
+  // Ported from maybeShowDailyReward()'s dailyPromptedFor guard: the reward
+  // is offer-once-per-day at the profile level (dailyRewardAvailable), and
+  // this flag on top of it stops the auto-prompt from firing again every
+  // time the player revisits the shell within the same session.
+  bool _dailyPromptShown = false;
+
   static const _items = [
     BottomNavItem(iconName: 'home', label: 'בית'),
     BottomNavItem(iconName: 'shopBag', label: 'חנות'),
     BottomNavItem(iconName: 'profile', label: 'פרופיל'),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _maybeShowDailyReward());
+  }
+
+  void _maybeShowDailyReward() {
+    if (_dailyPromptShown || !mounted) return;
+    final profile = context.read<PlayerProfileController>();
+    if (!profile.dailyRewardAvailable) return;
+    _dailyPromptShown = true;
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DailyRewardScreen()));
+  }
 
   void _goToTab(int index) {
     if (index == _index) return;
@@ -71,6 +97,23 @@ class _HomeShellState extends State<HomeShell> {
           child: IndexedStack(
             index: _index,
             children: const [HomeScreen(), ShopScreen(), ProfileScreen()],
+          ),
+        ),
+        // Ported from the web app's dailyRewardBtn - a floating gift button,
+        // always reachable, that reopens the same bonus modal manually.
+        floatingActionButton: PressableScale(
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const DailyRewardScreen()),
+          ),
+          child: Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: AppColors.gold,
+              shape: BoxShape.circle,
+              boxShadow: accentShadow(AppColors.gold),
+            ),
+            child: const Center(child: AppIcon('gift', size: 24, color: AppColors.textLight)),
           ),
         ),
         bottomNavigationBar: AppBottomNav(

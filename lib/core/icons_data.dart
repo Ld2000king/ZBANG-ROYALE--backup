@@ -62,4 +62,24 @@ const Map<String, String> kIconSvgs = {
   // Crossed swords / versus mark for random matchmaking.
   'versus':
       '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4 L16 16"/><path d="M20 4 L8 16"/><path d="M14 18 L18 14 L21 17 L17 21 Z"/><path d="M10 18 L6 14 L3 17 L7 21 Z"/></svg>',
+
+  // Circled question mark - Home's "הוראות משחק" help button.
+  'help':
+      '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.2 9.5 a2.8 2.8 0 1 1 4.3 2.4 c-0.9 0.6 -1.5 1.1 -1.5 2.1"/><circle cx="12" cy="17" r="0.1" fill="currentColor" stroke-width="2.5"/></svg>',
+
+  // Hamburger - Home's menu button.
+  'menu':
+      '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>',
+
+  // Gift box - the daily-reward FAB and menu entry.
+  'gift':
+      '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="1.5"/><path d="M3 12 H21"/><path d="M12 8 V21"/><path d="M12 8 C12 8 9 3 6.5 4.2 C4.5 5.2 6 8 12 8 Z"/><path d="M12 8 C12 8 15 3 17.5 4.2 C19.5 5.2 18 8 12 8 Z"/></svg>',
+
+  // Open book - the word bank ("מאגר המילים") menu entry.
+  'book':
+      '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5 a2 2 0 0 1 2 -2 h13 v18 H6 a2 2 0 0 0 -2 2 Z"/><path d="M9 8 H16"/><path d="M9 12 H14"/></svg>',
+
+  // Checkmark - a claimed daily-reward day.
+  'check':
+      '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 L9.5 18 L20 6"/></svg>',
 };

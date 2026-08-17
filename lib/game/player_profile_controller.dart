@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/avatars_data.dart';
+import '../core/daily_reward_data.dart';
 import '../core/shop_data.dart';
 
 /// Persistent player state - the economy (coins, diamonds, power-up
@@ -23,13 +24,17 @@ class PlayerProfileController extends ChangeNotifier {
     required String avatarId,
     required Set<String> ownedAvatars,
     required bool darkMode,
+    required String? lastDailyClaim,
+    required int dailyStreak,
   })  : _coins = coins,
         _darkMode = darkMode,
         _diamonds = diamonds,
         _inventory = inventory,
         _bestSingleScore = bestSingleScore,
         _avatarId = avatarId,
-        _ownedAvatars = ownedAvatars;
+        _ownedAvatars = ownedAvatars,
+        _lastDailyClaim = lastDailyClaim,
+        _dailyStreak = dailyStreak;
 
   static const _prefsKey = 'zbang_player_profile';
   static const int _defaultCoins = 100;
@@ -50,6 +55,8 @@ class PlayerProfileController extends ChangeNotifier {
         avatarId: kDefaultAvatarId,
         ownedAvatars: {},
         darkMode: false,
+        lastDailyClaim: null,
+        dailyStreak: 0,
       );
     }
 
@@ -68,6 +75,8 @@ class PlayerProfileController extends ChangeNotifier {
       avatarId: decoded['avatarId'] as String? ?? kDefaultAvatarId,
       ownedAvatars: savedOwnedAvatars.cast<String>().toSet(),
       darkMode: decoded['darkMode'] as bool? ?? false,
+      lastDailyClaim: decoded['lastDailyClaim'] as String?,
+      dailyStreak: decoded['dailyStreak'] as int? ?? 0,
     );
   }
 
@@ -78,12 +87,15 @@ class PlayerProfileController extends ChangeNotifier {
   String _avatarId;
   final Set<String> _ownedAvatars;
   bool _darkMode;
+  String? _lastDailyClaim;
+  int _dailyStreak;
 
   int get coins => _coins;
   int get diamonds => _diamonds;
   int get bestSingleScore => _bestSingleScore;
   String get avatarId => _avatarId;
   bool get darkMode => _darkMode;
+  int get dailyStreak => _dailyStreak;
 
   /// What MaterialApp should render with. The app ships light by default;
   /// the player opts into dark from the Profile screen.
@@ -110,8 +122,43 @@ class PlayerProfileController extends ChangeNotifier {
         'avatarId': _avatarId,
         'ownedAvatars': _ownedAvatars.toList(),
         'darkMode': _darkMode,
+        'lastDailyClaim': _lastDailyClaim,
+        'dailyStreak': _dailyStreak,
       }),
     );
+  }
+
+  static String _dateKey([DateTime? date]) {
+    final d = date ?? DateTime.now();
+    final month = d.month.toString().padLeft(2, '0');
+    final day = d.day.toString().padLeft(2, '0');
+    return '${d.year}-$month-$day';
+  }
+
+  /// Ported from dailyRewardAvailable(): once per calendar day.
+  bool get dailyRewardAvailable => _lastDailyClaim != _dateKey();
+
+  /// Ported from pendingDailyStreak(): the streak-day that WOULD be claimed
+  /// today - continues yesterday's streak, otherwise restarts at day 1.
+  int get pendingDailyStreak {
+    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+    if (_lastDailyClaim == _dateKey(yesterday)) return _dailyStreak + 1;
+    return 1;
+  }
+
+  /// Ported from claimDailyReward(): grants the reward for today's streak
+  /// day and advances the streak. Returns null if already claimed today.
+  DailyReward? claimDailyReward() {
+    if (!dailyRewardAvailable) return null;
+    final streak = pendingDailyStreak;
+    final reward = dailyRewardForStreak(streak);
+    _coins += reward.coins;
+    _diamonds += reward.diamonds;
+    _dailyStreak = streak;
+    _lastDailyClaim = _dateKey();
+    notifyListeners();
+    _persist();
+    return reward;
   }
 
   void addCoins(int amount) {

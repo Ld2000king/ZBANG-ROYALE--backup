@@ -6,11 +6,15 @@ import '../game/player_profile_controller.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
+import '../widgets/app_icon.dart';
 import '../widgets/mode_card.dart';
 import '../widgets/player_header_card.dart';
+import '../widgets/pressable_scale.dart';
 import '../widgets/stat_chip.dart';
 import 'battle_difficulty_screen.dart';
 import 'home_shell.dart';
+import 'instructions_screen.dart';
+import 'menu_screen.dart';
 import 'profile_screen.dart';
 import 'single_duration_screen.dart';
 import '../theme/app_palette.dart';
@@ -50,8 +54,32 @@ class HomeScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              StatChip(iconName: 'coin', value: '${profile.coins}'),
-              StatChip(iconName: 'diamond', value: '${profile.diamonds}'),
+              Row(
+                children: [
+                  _HeaderIconButton(
+                    icon: 'help',
+                    tooltip: 'הוראות משחק',
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const InstructionsScreen()),
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  _HeaderIconButton(
+                    icon: 'menu',
+                    tooltip: 'תפריט',
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const MenuScreen()),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  StatChip(iconName: 'coin', value: '${profile.coins}'),
+                  const SizedBox(width: AppSpacing.sm),
+                  StatChip(iconName: 'diamond', value: '${profile.diamonds}'),
+                ],
+              ),
             ],
           ),
           const SizedBox(height: AppSpacing.xl),
@@ -69,6 +97,39 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
           const _ModeGrid(),
         ],
+      ),
+    );
+  }
+}
+
+/// The round icon buttons in the header - ported from the web app's
+/// help-btn/menu-btn, which float over the top corners of the home screen.
+class _HeaderIconButton extends StatelessWidget {
+  const _HeaderIconButton({required this.icon, required this.tooltip, required this.onTap});
+
+  final String icon;
+  final String tooltip;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: PressableScale(
+        onTap: onTap,
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: context.palette.panelLight,
+            shape: BoxShape.circle,
+            border: Border.all(color: context.palette.hairline),
+            boxShadow: context.palette.shadowSm,
+          ),
+          child: Center(
+            child: AppIcon(icon, size: 20, color: context.palette.textPrimary),
+          ),
+        ),
       ),
     );
   }

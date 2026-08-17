@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,6 +27,19 @@ void main() {
     );
     // The shell's aurora background animates forever, so pumpAndSettle()
     // never settles here - pump a bounded span instead.
+    await tester.pump(const Duration(seconds: 1));
+
+    // A fresh profile has never claimed a daily reward, so the shell
+    // auto-opens that screen (pushed from a post-frame callback) on top of
+    // Home - dismiss it before asserting on Home's own content. The push's
+    // slide-in transition needs real time to reach the screen before it's
+    // tappable, not just an extra frame. pageBack() looks for an English
+    // "Back" tooltip or a Cupertino back button, neither of which exists in
+    // this Hebrew-only app - the AppBar's auto-added back arrow is its one
+    // IconButton.
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.tap(find.byType(IconButton));
+    await tester.pump();
     await tester.pump(const Duration(seconds: 1));
 
     // Home tab content.
@@ -62,6 +76,13 @@ void main() {
         child: const ZbangRoyaleApp(),
       ),
     );
+    await tester.pump(const Duration(seconds: 1));
+
+    // Dismiss the auto-opened daily reward (see the first test) before
+    // exercising the bottom nav.
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.tap(find.byType(IconButton));
+    await tester.pump();
     await tester.pump(const Duration(seconds: 1));
 
     await tester.tap(find.text('חנות'));

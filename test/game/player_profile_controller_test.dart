@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zbang_royale/core/avatars_data.dart';
+import 'package:zbang_royale/core/daily_reward_data.dart';
 import 'package:zbang_royale/game/player_profile_controller.dart';
 
 void main() {
@@ -169,5 +170,80 @@ void main() {
     expect(bought, isFalse);
     expect(profile.diamonds, 0);
     expect(profile.isAvatarOwned(premiumAvatar.id), isFalse);
+  });
+
+  test('a fresh profile has a daily reward available on day 1', () async {
+    final profile = await PlayerProfileController.load();
+    expect(profile.dailyRewardAvailable, isTrue);
+    expect(profile.pendingDailyStreak, 1);
+    expect(profile.dailyStreak, 0);
+  });
+
+  test('claimDailyReward pays day 1 and blocks a second claim same day', () async {
+    final profile = await PlayerProfileController.load();
+    final reward = profile.claimDailyReward();
+
+    expect(reward, isNotNull);
+    expect(reward!.coins, 50);
+    expect(reward.diamonds, 0);
+    expect(profile.coins, 150);
+    expect(profile.dailyStreak, 1);
+    expect(profile.dailyRewardAvailable, isFalse);
+
+    expect(profile.claimDailyReward(), isNull);
+    expect(profile.coins, 150); // unchanged - the second claim paid nothing
+  });
+
+  test('day 7 of the streak also pays diamonds, then the cycle repeats', () async {
+    // pendingDailyStreak only continues when the last claim was exactly
+    // yesterday - dailyStreak just carries how many consecutive days that
+    // run already covers. Six days already banked, last one yesterday,
+    // means today resumes the streak at day 7.
+    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+    final key = '${yesterday.year}-${yesterday.month.toString().padLeft(2, '0')}-'
+        '${yesterday.day.toString().padLeft(2, '0')}';
+    SharedPreferences.setMockInitialValues({
+      'zbang_player_profile':
+          '{"coins":100,"diamonds":0,"inventory":{},"bestSingleScore":0,'
+              '"avatarId":"dan","ownedAvatars":[],"darkMode":false,'
+              '"lastDailyClaim":"$key","dailyStreak":6}',
+    });
+    final profile = await PlayerProfileController.load();
+    expect(profile.pendingDailyStreak, 7);
+
+    final reward = profile.claimDailyReward();
+    expect(reward!.coins, 400);
+    expect(reward.diamonds, 15);
+    expect(profile.dailyStreak, 7);
+
+    // Day 8 wraps back to the day-1 reward.
+    final today = DateTime.now();
+    final todayKey = '${today.year}-${today.month.toString().padLeft(2, '0')}-'
+        '${today.day.toString().padLeft(2, '0')}';
+    SharedPreferences.setMockInitialValues({
+      'zbang_player_profile':
+          '{"coins":100,"diamonds":0,"inventory":{},"bestSingleScore":0,'
+              '"avatarId":"dan","ownedAvatars":[],"darkMode":false,'
+              '"lastDailyClaim":"$todayKey","dailyStreak":7}',
+    });
+    // Fast-forward "tomorrow" isn't directly simulatable without a clock
+    // dependency, so this just checks the cycling math itself.
+    expect(dailyRewardForStreak(8).coins, dailyRewardForStreak(1).coins);
+  });
+
+  test('missing a day resets the streak back to day 1', () async {
+    final twoDaysAgo = DateTime.now().subtract(const Duration(days: 2));
+    final key = '${twoDaysAgo.year}-${twoDaysAgo.month.toString().padLeft(2, '0')}-'
+        '${twoDaysAgo.day.toString().padLeft(2, '0')}';
+    SharedPreferences.setMockInitialValues({
+      'zbang_player_profile':
+          '{"coins":100,"diamonds":0,"inventory":{},"bestSingleScore":0,'
+              '"avatarId":"dan","ownedAvatars":[],"darkMode":false,'
+              '"lastDailyClaim":"$key","dailyStreak":4}',
+    });
+    final profile = await PlayerProfileController.load();
+    expect(profile.pendingDailyStreak, 1); // the gap breaks the streak
+    final reward = profile.claimDailyReward();
+    expect(reward!.coins, 50); // day-1 reward, not a continuation of day 5
   });
 }

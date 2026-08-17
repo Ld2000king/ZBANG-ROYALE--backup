@@ -67,6 +67,8 @@ flutter:
 
   assets:
     - assets/dictionary/words.json
+    - assets/legal/privacy.txt
+    - assets/legal/terms.txt
 
   fonts:
     - family: Rubik
