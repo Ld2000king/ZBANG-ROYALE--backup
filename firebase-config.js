@@ -6,6 +6,10 @@
 // זה בטוח לשיתוף/קומיט - ה-apiKey מיועד לצד לקוח; ההגנה היא ב-Security Rules.
 // ============================================================================
 
+// Firebase is TEMPORARILY DISCONNECTED in this backup repo (see FIREBASE_READY
+// below) so nothing run from here can accidentally read/write the live
+// production project. To reconnect, restore the real databaseURL that was
+// here before: https://zbang-royale-default-rtdb.firebaseio.com
 const firebaseConfig = {
     apiKey: "AIzaSyAO_fD-DXwm5JRbdTdtObx9zbUmXxY4obs",
     authDomain: "zbang-royale.firebaseapp.com",
@@ -13,7 +17,7 @@ const firebaseConfig = {
     // עמוד ה-Realtime Database ב-Console (נראית כמו אחת מאלה):
     //   https://zbang-royale-default-rtdb.firebaseio.com               (אזור ברירת מחדל US)
     //   https://zbang-royale-default-rtdb.europe-west1.firebasedatabase.app  (אירופה)
-    databaseURL: "https://zbang-royale-default-rtdb.firebaseio.com",
+    databaseURL: "PASTE_YOUR_DATABASE_URL_HERE",
     projectId: "zbang-royale",
     storageBucket: "zbang-royale.firebasestorage.app",
     messagingSenderId: "571259407169",
