@@ -14,8 +14,8 @@ class BottomNavItem {
   final String label;
 }
 
-/// The app's tab bar: a white surface with a lime pill marking the active
-/// tab, matching the rest of the light card system.
+/// The app's tab bar: a card surface with an accent pill marking the
+/// active tab.
 class AppBottomNav extends StatelessWidget {
   const AppBottomNav({
     super.key,
@@ -69,11 +69,10 @@ class _NavButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // The active pill is a fixed bright lime in both themes, so its label
-    // must use the fixed dark tone - the palette's textPrimary goes light
-    // in dark mode and would disappear on it.
+    // The active pill is filled with the play accent in both themes, so
+    // its label is white; an inactive one follows the palette.
     final contentColor =
-        selected ? AppColors.onBrightFill : context.palette.textSecondary;
+        selected ? AppColors.textLight : context.palette.textSecondary;
 
     return Semantics(
       selected: selected,
@@ -89,7 +88,7 @@ class _NavButton extends StatelessWidget {
             vertical: AppSpacing.sm,
           ),
           decoration: BoxDecoration(
-            color: selected ? AppColors.limeFill : Colors.transparent,
+            color: selected ? AppColors.green : Colors.transparent,
             borderRadius: BorderRadius.circular(999),
           ),
           child: Column(

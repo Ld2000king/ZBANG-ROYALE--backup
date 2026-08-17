@@ -40,12 +40,12 @@ class ModeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // An enabled card sits on a fixed bright pastel, so its content is
-    // always the fixed dark tone - the palette's textPrimary would go light
-    // in dark mode and vanish against the lime. A disabled card drops the
-    // pastel entirely and uses a palette surface, so it follows the theme.
+    // An enabled card is filled with its action's accent, so its content is
+    // always white - the same rule every accent fill in the app follows. A
+    // disabled card drops the accent for a palette surface and therefore
+    // follows the theme's own text tones.
     final effectiveFill = enabled ? fill : context.palette.surface2;
-    final contentColor = enabled ? AppColors.onBrightFill : context.palette.textSecondary;
+    final contentColor = enabled ? AppColors.textLight : context.palette.textSecondary;
 
     final card = Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -62,9 +62,10 @@ class ModeCard extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              // White on the pastel in both themes, matching contentColor.
+              // A lighter well punched into the accent fill, so the icon
+              // reads without introducing a second color.
               color: enabled
-                  ? AppColors.textLight.withValues(alpha: 0.85)
+                  ? AppColors.textLight.withValues(alpha: 0.18)
                   : context.palette.panelLight.withValues(alpha: 0.6),
               borderRadius: BorderRadius.circular(AppRadii.sm),
             ),

@@ -24,7 +24,9 @@ void main() {
         child: const ZbangRoyaleApp(),
       ),
     );
-    await tester.pumpAndSettle();
+    // The shell's aurora background animates forever, so pumpAndSettle()
+    // never settles here - pump a bounded span instead.
+    await tester.pump(const Duration(seconds: 1));
 
     // Home tab content.
     expect(find.text('זבאנג רויאל'), findsOneWidget);
@@ -60,14 +62,16 @@ void main() {
         child: const ZbangRoyaleApp(),
       ),
     );
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     await tester.tap(find.text('חנות'));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
     expect(find.text('עזרים למשחק'), findsOneWidget);
 
     await tester.tap(find.text('פרופיל'));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
     expect(find.text('תמונות פרופיל'), findsOneWidget);
   });
 }

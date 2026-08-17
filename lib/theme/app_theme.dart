@@ -217,7 +217,7 @@ class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: palette.panelLight,
         surfaceTintColor: Colors.transparent,
-        indicatorColor: AppColors.limeFill,
+        indicatorColor: AppColors.green,
         elevation: 0,
         labelTextStyle: WidgetStateProperty.all(
           AppTextStyles.bodySecondary.copyWith(color: palette.textSecondary),

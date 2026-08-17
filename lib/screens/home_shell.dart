@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
 import '../widgets/app_bottom_nav.dart';
+import '../widgets/aurora_background.dart';
 import 'home_screen.dart';
 import 'profile_screen.dart';
 import 'shop_screen.dart';
@@ -61,11 +61,17 @@ class _HomeShellState extends State<HomeShell> {
       goToTab: _goToTab,
       child: Scaffold(
         backgroundColor: context.palette.bgDeep,
-        // IndexedStack keeps each tab's scroll position and state alive as
-        // the player moves between them.
-        body: IndexedStack(
-          index: _index,
-          children: const [HomeScreen(), ShopScreen(), ProfileScreen()],
+        // The ambient glow sits behind every tab so the shell reads as one
+        // continuous surface. It's dialled down on the light theme, where
+        // the same alpha that flatters dark surfaces turns the page muddy.
+        body: AuroraBackground(
+          strength: Theme.of(context).brightness == Brightness.dark ? 1.0 : 0.35,
+          // IndexedStack keeps each tab's scroll position and state alive as
+          // the player moves between them.
+          child: IndexedStack(
+            index: _index,
+            children: const [HomeScreen(), ShopScreen(), ProfileScreen()],
+          ),
         ),
         bottomNavigationBar: AppBottomNav(
           items: _items,

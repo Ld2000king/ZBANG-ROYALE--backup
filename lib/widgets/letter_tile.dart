@@ -5,9 +5,8 @@ import '../theme/app_radii.dart';
 import '../theme/app_text_styles.dart';
 import '../theme/app_palette.dart';
 
-/// One board tile: a chunky raised key that lights up lime while it's part
-/// of the current drag. Both states carry dark text - the selected fill is
-/// a bright pastel, not a saturated accent, so white would be unreadable.
+/// One board tile: a chunky raised key that lights up in the play accent
+/// while it's part of the current drag.
 class LetterTile extends StatelessWidget {
   const LetterTile({super.key, required this.letter, required this.selected});
 
@@ -24,10 +23,10 @@ class LetterTile extends StatelessWidget {
         duration: const Duration(milliseconds: 120),
         curve: Curves.easeOut,
         decoration: BoxDecoration(
-          color: selected ? AppColors.limeFill : context.palette.panelLight,
+          color: selected ? AppColors.green : context.palette.panelLight,
           borderRadius: BorderRadius.circular(AppRadii.tile),
           border: Border.all(
-            color: selected ? AppColors.limeFill : context.palette.hairline,
+            color: selected ? AppColors.green : context.palette.hairline,
             width: 1,
           ),
           boxShadow: selected ? context.palette.shadowMd : context.palette.shadowSm,
@@ -36,10 +35,10 @@ class LetterTile extends StatelessWidget {
         child: Text(
           letter,
           style: AppTextStyles.boardLetter.copyWith(
-            // A selected tile is a fixed bright lime in both themes, so its
-            // letter stays the fixed dark tone rather than following the
-            // palette (which goes light in dark mode and would vanish).
-            color: selected ? AppColors.onBrightFill : context.palette.textPrimary,
+            // A selected tile is filled with the play accent in both
+            // themes, so its letter is white - the same rule every accent
+            // fill follows - rather than following the palette.
+            color: selected ? AppColors.textLight : context.palette.textPrimary,
           ),
         ),
       ),
